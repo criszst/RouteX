@@ -9,6 +9,7 @@ class Layer {
         this.path = undefined;
     }
     match(path) {
+        console.log(this.path, path + '' + this.name);
         return this.path === path;
     }
     handle_request(req, res, next) {

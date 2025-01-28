@@ -17,6 +17,7 @@ export class Layer {
     }
 
     match(path: string): boolean | string {
+        console.log(this.path, path + '' + this.name);
         return this.path === path;
     }
 

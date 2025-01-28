@@ -30,7 +30,7 @@ export class Route {
 
     flattenHandlers.forEach((handler) => {
       if (typeof handler !== 'function') {
-        throw new Error('Handler precisa ser uma função.');
+        throw new Error('Handler precisa ser uma função');
       }
 
       const layer = new Layer(this.path, {}, handler);
