@@ -11,8 +11,8 @@ class Router {
         this.strict = options.strict || false;
     }
     get(path, ...handlers) {
-        const route = this.route(path); // Cria ou recupera a rota para o caminho especificado
-        route.get(...handlers); // Adiciona os manipuladores de requisição ao stack da rota
+        const route = this.route(path);
+        route.get(...handlers);
     }
     route(path) {
         const route = new route_1.Route(path);

@@ -1,25 +1,43 @@
-import { app as proto } from './app';
-import mergeDescriptors = require("merge-descriptors")
-
+import { Router } from "./router"
+const mergeDescriptors = require("merge-descriptors")
 
 interface App {
-    (req: any, res: any, next: any): void;
-    init(): void;
-    handle(req: any, res: any, next: any): void;
-    
-    listen(port: number, callback: () => void): void;
-    get(path: string, ...handlers: Array<(req: any, res: any, next?: any) => void>): void;
+  (req: any, res: any, next: any): void
+  init(): void
+  handle(req: any, res: any, next: any): void
+  listen(port: number, callback: () => void): void
+  get(path: string, ...handlers: Array<(req: any, res: any, next?: any) => void>): void
+  router: Router
 }
 
-export function createApp(): App {
-    const app: App = function (req, res, next) {
-        app.handle(req, res, next);
-    } as App
+const proto = {
+  router: {} as Router,
 
-    mergeDescriptors(app, proto, false);
-
-    app.init();
-    return app
+  init() {
+    this.router = new Router()
+  },
+  handle(req: any, res: any, next: any) {
+    this.router.handle(req, res, next)
+  },
+  listen(port: number, callback: () => void) {
+    const server = require("http").createServer(this)
+    return server.listen(port, callback)
+  },
+  get(path: string, ...handlers: Array<(req: any, res: any, next?: any) => void>) {
+    this.router.get(path, ...handlers)
+  },
 }
 
-export const app = createApp
+function createApp(): App {
+  const app = ((req: any, res: any, next: any) => {
+    app.handle(req, res, next)
+  }) as unknown as App
+
+  mergeDescriptors(app, proto, false)
+
+  app.init()
+  return app
+}
+
+export const app = createApp()
+
