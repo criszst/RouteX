@@ -6,7 +6,9 @@ interface App {
   init(): void
   handle(req: any, res: any, next: any): void
   listen(port: number, callback: () => void): void
+
   get(path: string, ...handlers: Array<(req: any, res: any, next?: any) => void>): void
+  post(path: string, ...handlers: Array<(req: any, res: any, next?: any) => void>): void
   router: Router
 }
 
@@ -26,6 +28,10 @@ const prototype = {
   get(path: string, ...handlers: Array<(req: any, res: any, next?: any) => void>) {
     this.router.get(path, ...handlers)
   },
+
+  post(path: string, ...handlers: Array<(req: any, res: any, next?: any) => void>) {
+    this.router.post(path, ...handlers)
+  }
 }
 
 function createApp(): App {

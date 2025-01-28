@@ -17,6 +17,14 @@ class Route {
         });
         this.methods['get'] = true;
     }
+    post(...handlers) {
+        handlers.forEach((handler) => {
+            const layer = new layer_1.Layer(this.path, {}, handler);
+            layer.method = 'post';
+            this.stack.push(layer);
+        });
+        this.methods['post'] = true;
+    }
     dispatch(req, res, done) { }
     addMethod(method, handlers) {
         const flattenHandlers = (0, flatten_1.flatten)(handlers);

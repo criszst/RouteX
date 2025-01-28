@@ -17,13 +17,16 @@ export class Layer {
     }
 
     match(path: string): boolean | string {
-        console.log(this.path, path + '' + this.name);
-        return this.path === path;
+        console.log(this.path + ' ' + this.name);
+
+        return this.route?.path === path;
     }
 
     handle_request(req: IncomingMessage, res: ServerResponse, next: Function): void {
+        const fn = this.handle
+
         try {
-            this.handle(req, res, next);
+            fn(req, res, next);
         } catch (err) {
             console.error(err);
         }

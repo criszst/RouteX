@@ -1,7 +1,9 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import { Route } from './route';
 import { Layer } from './layer';
+const parseUrl = require('parseurl');
 
+// TODO: generate doc from each method
 export class Router {
   stack: Layer[];
   params: Record<string, unknown>;
@@ -20,6 +22,12 @@ export class Router {
     route.get(...handlers);
   }
 
+  post(path: string, ...handlers: Array<(req: IncomingMessage, res: ServerResponse, next?: Function) => void>): void {
+    const route = this.route(path);
+    route.post(...handlers);
+
+  }
+
   route(path: string): Route {
     const route = new Route(path);
     const layer = new Layer(path, {}, route.dispatch.bind(route));
@@ -30,11 +38,49 @@ export class Router {
   }
 
   handle(req: IncomingMessage, res: ServerResponse, out?: Function): void {
-    const layer = this.stack[0];
-    const route = layer.route;
+    const self = this;
+    const stack = self.stack;
+    const path = this.getPathName(req);
 
-    if (route && route.stack.length > 0) {
-      route?.stack[0].handle_request(req, res, () => {});
+    let layer;
+    let match;
+    let route;
+
+    let idx = 0;
+
+    while (match !== true && idx < stack.length) {
+      layer = stack[idx++];
+      match = this.matchLayer(layer, path);
+      route = layer.route;
+
+      if (match !== true) {
+        continue;
+      }
+
+  
+      if (!route) {
+        continue;
+      }
+
+      route.stack[0].handle_request(req, res, () => { });
+    }
+  }
+
+  getPathName(req: any): any {
+    try {
+      return parseUrl(req).pathname;
+    }
+
+    catch (err) {
+      return undefined;
+    }
+  }
+
+  matchLayer(layer: Layer, path: any) {
+    try {
+      return layer.match(path);
+    } catch (err) {
+      return err;
     }
   }
 }

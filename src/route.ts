@@ -21,6 +21,16 @@ export class Route {
     });
     this.methods['get'] = true;
   }
+
+  post(...handlers: Array<Function>): void {
+    handlers.forEach((handler) => {
+      const layer = new Layer(this.path, {}, handler);
+      layer.method = 'post';
+      this.stack.push(layer);
+    })
+    
+    this.methods['post'] = true;
+  }
   
 
   dispatch(req: IncomingMessage, res: ServerResponse, done: () => void): void { }

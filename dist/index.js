@@ -7,9 +7,16 @@ express_1.app.get("/", (req, res) => {
     res.write("teste xpto...");
     res.end();
 });
-express_1.app.get('/:id', (req, res) => {
+// TODO: implement params in route
+// for now, just the first param is accepted
+express_1.app.get('/2', (req, res) => {
     res.writeHead(200);
-    res.write(req.params.id);
+    res.write('Hello world from /2');
+    res.end();
+});
+express_1.app.post('/post', (req, res) => {
+    res.writeHead(200);
+    res.write('Data from post :)');
     res.end();
 });
 express_1.app.listen(port, () => {

@@ -18,6 +18,9 @@ const prototype = {
     get(path, ...handlers) {
         this.router.get(path, ...handlers);
     },
+    post(path, ...handlers) {
+        this.router.post(path, ...handlers);
+    }
 };
 function createApp() {
     const app = ((req, res, next) => {

@@ -9,12 +9,14 @@ class Layer {
         this.path = undefined;
     }
     match(path) {
-        console.log(this.path, path + '' + this.name);
-        return this.path === path;
+        var _a;
+        console.log(this.path, path + ' ' + this.name);
+        return ((_a = this.route) === null || _a === void 0 ? void 0 : _a.path) === path;
     }
     handle_request(req, res, next) {
+        const fn = this.handle;
         try {
-            this.handle(req, res, next);
+            fn(req, res, next);
         }
         catch (err) {
             console.error(err);

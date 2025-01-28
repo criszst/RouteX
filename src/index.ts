@@ -8,12 +8,17 @@ app.get("/", (req: any, res: any) => {
   res.end()
 })
 
-// TODO: implement params in route
-// for now, just the first param is accepted
-app.get('/:id', (req: any, res: any) => {
+
+app.get('/2', (req, res) => {
   res.writeHead(200)
-  res.write(req.params.id)
-  res.end()
+  res.write('teste xpto /2');
+  res.end();
+});
+
+app.post('/post',(req,res) => {
+  res.writeHead(200)
+  res.write('Data -> /post');
+  res.end();
 })
 
 app.listen(port, () => {
