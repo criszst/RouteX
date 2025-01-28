@@ -1,0 +1,23 @@
+{
+  "name": "myexpress",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts" ,
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.12.0",
+    "setprototypeof": "^1.2.0",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "array-flatten": "^3.0.0",
+    "http": "^0.0.1-security",
+    "merge-descriptors": "^2.0.0",
+    "methods": "^1.1.2"
+  }
+}
