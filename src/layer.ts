@@ -16,11 +16,11 @@ export class Layer {
         this.path = undefined;
     }
 
-    match(path: string) {
+    match(path: string): boolean | string {
         return this.path === path;
     }
 
-    handle_request(req: IncomingMessage, res: ServerResponse, next: Function) {
+    handle_request(req: IncomingMessage, res: ServerResponse, next: Function): void {
         try {
             this.handle(req, res, next);
         } catch (err) {

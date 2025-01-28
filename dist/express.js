@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.app = void 0;
 const router_1 = require("./router");
 const mergeDescriptors = require("merge-descriptors");
-const proto = {
+const prototype = {
     router: {},
     init() {
         this.router = new router_1.Router();
@@ -23,7 +23,7 @@ function createApp() {
     const app = ((req, res, next) => {
         app.handle(req, res, next);
     });
-    mergeDescriptors(app, proto, false);
+    mergeDescriptors(app, prototype, false);
     app.init();
     return app;
 }

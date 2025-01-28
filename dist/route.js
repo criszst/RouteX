@@ -17,8 +17,7 @@ class Route {
         });
         this.methods['get'] = true;
     }
-    dispatch(req, res, done) {
-    }
+    dispatch(req, res, done) { }
     addMethod(method, handlers) {
         const flattenHandlers = (0, flatten_1.flatten)(handlers);
         flattenHandlers.forEach((handler) => {

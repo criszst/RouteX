@@ -23,11 +23,9 @@ export class Route {
   }
   
 
-  dispatch(req: IncomingMessage, res: ServerResponse, done: () => void) {
- 
-  }
+  dispatch(req: IncomingMessage, res: ServerResponse, done: () => void): void { }
 
-  private addMethod(method: string, handlers: Function[]) {
+  private addMethod(method: string, handlers: Function[]): void {
     const flattenHandlers = flatten(handlers);
 
     flattenHandlers.forEach((handler) => {

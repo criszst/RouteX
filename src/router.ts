@@ -29,7 +29,7 @@ export class Router {
     return route;
   }
 
-  handle(req: IncomingMessage, res: ServerResponse, out?: Function) {
+  handle(req: IncomingMessage, res: ServerResponse, out?: Function): void {
     const layer = this.stack[0];
     const route = layer.route;
 

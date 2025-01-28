@@ -10,7 +10,7 @@ interface App {
   router: Router
 }
 
-const proto = {
+const prototype = {
   router: {} as Router,
 
   init() {
@@ -33,7 +33,7 @@ function createApp(): App {
     app.handle(req, res, next)
   }) as unknown as App
 
-  mergeDescriptors(app, proto, false)
+  mergeDescriptors(app, prototype, false)
 
   app.init()
   return app
