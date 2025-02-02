@@ -48,6 +48,15 @@ export class Router {
 
     let idx = 0;
 
+    
+
+    const next = () => {
+      const path = this.getPathName(req);
+      
+    }
+
+    next();
+
     while (match !== true && idx < stack.length) {
       layer = stack[idx++];
       match = this.matchLayer(layer, path);

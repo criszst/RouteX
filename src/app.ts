@@ -1,5 +1,12 @@
+import App from './interfaces/IApp';
 import { Router } from './router';
 const mergeDescriptors = require('merge-descriptors');
+
+/**
+ * Prototype for express app
+ * 
+ * With this, we can extend express app methods
+ */
 
 const proto = {
     router: {} as Router,
@@ -21,20 +28,8 @@ const proto = {
     post(path: string, ...handlers: Array<(req: any, res: any, next?: any) => void>) {
         this.router.post(path, ...handlers);
     }
+
 };
-
-interface App {
-    (req: any, res: any, next: any): void;
-    init(): void;
-    handle(req: any, res: any, next: any): void;
-    listen(port: number, callback: () => void): void;
-
-    get(path: string, ...handlers: Array<(req: any, res: any, next?: any) => void>): void;
-    post(path: string, ...handlers: Array<(req: any, res: any, next?: any) => void>): void;
-    
-    router: Router; 
-}
-
 
 export function createApp(): App {
     const app: App = function (req, res, next) {

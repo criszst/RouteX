@@ -4,6 +4,11 @@ exports.app = void 0;
 exports.createApp = createApp;
 const router_1 = require("./router");
 const mergeDescriptors = require('merge-descriptors');
+/**
+ * Prototype for express app
+ *
+ * With this, we can extend express app methods
+ */
 const proto = {
     router: {},
     init() {
@@ -18,6 +23,9 @@ const proto = {
     },
     get(path, ...handlers) {
         this.router.get(path, ...handlers);
+    },
+    post(path, ...handlers) {
+        this.router.post(path, ...handlers);
     }
 };
 function createApp() {

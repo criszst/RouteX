@@ -10,7 +10,7 @@ class Layer {
     }
     match(path) {
         var _a;
-        console.log(this.path, path + ' ' + this.name);
+        console.log(this.path + ' ' + this.name);
         return ((_a = this.route) === null || _a === void 0 ? void 0 : _a.path) === path;
     }
     handle_request(req, res, next) {

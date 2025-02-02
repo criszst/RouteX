@@ -21,6 +21,12 @@ app.post('/post',(req,res) => {
   res.end();
 })
 
+app.post('/post2', (req, res) => {
+  res.writeHead(200)
+  res.write('Data -> /post2');
+  res.end();
+})
+
 app.listen(port, () => {
   console.log(`server rodando na porta ${3000}:\n-> http://localhost:${3000}`)
 })
