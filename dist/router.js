@@ -30,23 +30,26 @@ class Router {
     handle(req, res, out) {
         const self = this;
         const stack = self.stack;
-        const path = this.getPathName(req);
-        let layer;
-        let match;
-        let route;
-        let idx = 0;
-        while (match !== true && idx < stack.length) {
-            layer = stack[idx++];
-            match = this.matchLayer(layer, path);
-            route = layer.route;
-            if (match !== true) {
-                continue;
+        const next = () => {
+            let layer;
+            let match;
+            let route;
+            let idx = 0;
+            const path = this.getPathName(req);
+            while (match !== true && idx < stack.length) {
+                layer = stack[idx++];
+                match = this.matchLayer(layer, path);
+                route = layer.route;
+                if (match !== true) {
+                    continue;
+                }
+                if (!route) {
+                    continue;
+                }
+                route.stack[0].handle_request(req, res, () => { });
             }
-            if (!route) {
-                continue;
-            }
-            route.stack[0].handle_request(req, res, () => { });
-        }
+        };
+        next();
     }
     getPathName(req) {
         try {

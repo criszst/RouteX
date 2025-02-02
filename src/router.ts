@@ -40,39 +40,37 @@ export class Router {
   handle(req: IncomingMessage, res: ServerResponse, out?: Function): void {
     const self = this;
     const stack = self.stack;
-    const path = this.getPathName(req);
 
-    let layer;
-    let match;
-    let route;
-
-    let idx = 0;
-
-    
 
     const next = () => {
+      let layer;
+      let match;
+      let route;
+
+      let idx = 0;
+
       const path = this.getPathName(req);
+
+      while (match !== true && idx < stack.length) {
+        layer = stack[idx++];
+        match = this.matchLayer(layer, path);
+        route = layer.route;
+  
+        if (match !== true) {
+          continue;
+        }
+  
+    
+        if (!route) {
+          continue;
+        }
+  
+        route.stack[0].handle_request(req, res, () => { });
+      }
       
     }
 
     next();
-
-    while (match !== true && idx < stack.length) {
-      layer = stack[idx++];
-      match = this.matchLayer(layer, path);
-      route = layer.route;
-
-      if (match !== true) {
-        continue;
-      }
-
-  
-      if (!route) {
-        continue;
-      }
-
-      route.stack[0].handle_request(req, res, () => { });
-    }
   }
 
   getPathName(req: any): any {
