@@ -2,14 +2,14 @@ import { app } from "./express"
 
 const port = 3000
 
-app.get("/", (req: any, res: any, next) => {
-  console.log(next)
+app.get('/', (req: any, res: any, next: any) => {
+  console.log(next.name)
   next()
 })
 
 app.get('/', (req, res) => {
   res.writeHead(200)
-  res.write('next');
+  res.write('next teste express');
   res.end();
 });
 

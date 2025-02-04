@@ -1,5 +1,7 @@
 import App from './interfaces/IApp';
 import { Router } from './router';
+
+const middleware = require('./middleware/init');
 const mergeDescriptors = require('merge-descriptors');
 
 /**
@@ -14,6 +16,11 @@ const proto = {
     init() {
         this.router = new Router();
     },
+
+    // enabled() {
+    //     return Boolean(this.set(settings));
+    // },
+
     handle(req: any, res: any, next: any) {
         this.router.handle(req, res, next);
     },
@@ -27,6 +34,10 @@ const proto = {
 
     post(path: string, ...handlers: Array<(req: any, res: any, next?: any) => void>) {
         this.router.post(path, ...handlers);
+    },
+
+    lazyrouter() {
+        this.router.use(middleware.init(this))
     }
 
 };

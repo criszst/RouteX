@@ -17,9 +17,13 @@ export class Layer {
     }
 
     match(path: string): boolean | string {
+        if (this.route && this.route.path === path) return true;
+        
+        else if (this.name === 'expressInit') return true
+
         console.log(this.path + ' ' + this.name);
 
-        return this.route?.path === path;
+        return false
     }
 
     handle_request(req: IncomingMessage, res: ServerResponse, next: Function): void {

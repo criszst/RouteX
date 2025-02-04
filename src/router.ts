@@ -40,18 +40,16 @@ export class Router {
   handle(req: IncomingMessage, res: ServerResponse, out?: Function): void {
     const self = this;
     const stack = self.stack;
-
-
+    let idx = 0;
+  
     const next = () => {
       let layer;
       let match;
       let route;
 
-      let idx = 0;
-
-      const path = this.getPathName(req);
-
       while (match !== true && idx < stack.length) {
+        const path = this.getPathName(req);
+
         layer = stack[idx++];
         match = this.matchLayer(layer, path);
         route = layer.route;
@@ -65,7 +63,11 @@ export class Router {
           continue;
         }
   
-        route.stack[0].handle_request(req, res, () => { });
+        route.stack[0].handle_request(req, res, next);
+      }
+
+      if (match) {
+        layer?.handle_request(req, res, next);
       }
       
     }
@@ -90,6 +92,19 @@ export class Router {
       return err;
     }
   }
+
+
+
+  use(fn: Function): Router {
+    const layer = new Layer('/', {}, fn);
+    layer.route = undefined;
+    
+    this.stack.push(layer);
+
+    return this;
+  }
+
+
 }
 
 export default Router;

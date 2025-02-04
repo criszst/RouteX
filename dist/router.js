@@ -30,13 +30,13 @@ class Router {
     handle(req, res, out) {
         const self = this;
         const stack = self.stack;
+        let idx = 0;
         const next = () => {
             let layer;
             let match;
             let route;
-            let idx = 0;
-            const path = this.getPathName(req);
             while (match !== true && idx < stack.length) {
+                const path = this.getPathName(req);
                 layer = stack[idx++];
                 match = this.matchLayer(layer, path);
                 route = layer.route;
@@ -46,7 +46,10 @@ class Router {
                 if (!route) {
                     continue;
                 }
-                route.stack[0].handle_request(req, res, () => { });
+                route.stack[0].handle_request(req, res, next);
+            }
+            if (match) {
+                layer === null || layer === void 0 ? void 0 : layer.handle_request(req, res, next);
             }
         };
         next();
@@ -66,6 +69,12 @@ class Router {
         catch (err) {
             return err;
         }
+    }
+    use(fn) {
+        const layer = new layer_1.Layer('/', {}, fn);
+        layer.route = undefined;
+        this.stack.push(layer);
+        return this;
     }
 }
 exports.Router = Router;

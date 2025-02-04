@@ -9,9 +9,12 @@ class Layer {
         this.path = undefined;
     }
     match(path) {
-        var _a;
+        if (this.route && this.route.path === path)
+            return true;
+        else if (this.name === 'expressInit')
+            return true;
         console.log(this.path + ' ' + this.name);
-        return ((_a = this.route) === null || _a === void 0 ? void 0 : _a.path) === path;
+        return false;
     }
     handle_request(req, res, next) {
         const fn = this.handle;

@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.app = void 0;
 exports.createApp = createApp;
 const router_1 = require("./router");
+const middleware = require('./middleware/init');
 const mergeDescriptors = require('merge-descriptors');
 /**
  * Prototype for express app
@@ -14,6 +15,9 @@ const proto = {
     init() {
         this.router = new router_1.Router();
     },
+    // enabled() {
+    //     return Boolean(this.set(settings));
+    // },
     handle(req, res, next) {
         this.router.handle(req, res, next);
     },
@@ -26,6 +30,9 @@ const proto = {
     },
     post(path, ...handlers) {
         this.router.post(path, ...handlers);
+    },
+    lazyrouter() {
+        this.router.use(middleware.init(this));
     }
 };
 function createApp() {

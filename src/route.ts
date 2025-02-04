@@ -16,6 +16,7 @@ export class Route {
   get(...handlers: Array<Function>): void {
     handlers.forEach((handler) => {
       const layer = new Layer(this.path, {}, handler);
+
       layer.method = 'get';
       this.stack.push(layer);
     });
@@ -25,6 +26,7 @@ export class Route {
   post(...handlers: Array<Function>): void {
     handlers.forEach((handler) => {
       const layer = new Layer(this.path, {}, handler);
+
       layer.method = 'post';
       this.stack.push(layer);
     })
@@ -51,3 +53,4 @@ export class Route {
     this.methods[method] = true;
   }
 }
+
