@@ -12,17 +12,45 @@ const mergeDescriptors = require('merge-descriptors');
 
 const proto = {
     router: {} as Router,
+    cache: {},
+    engines: {},
+    settings: {} as any,
 
     init() {
         this.router = new Router();
     },
 
-    // enabled() {
-    //     return Boolean(this.set(settings));
-    // },
+    set(setting: any, value: any) {
+        this.settings[setting] = value;
+
+        switch (setting) {
+            case 'etag':
+                this.set('etag fn', '');
+                break;
+            case 'query parser':
+                this.set('query parser fn', '');
+                break;
+            case 'trust proxy':
+                this.set('trust proxy fn', '');
+                break;
+        }
+
+        return this;
+    },
+
+    enabled(setting: any) {
+        return Boolean(this.set(setting, ''));
+    },
 
     handle(req: any, res: any, next: any) {
-        this.router.handle(req, res, next);
+        this.lazyrouter()
+
+        if (!res.send) {
+            res.send = (body: any) => {
+                console.log(`res.send: ${body}`);
+            }
+        }
+        this.router.handle(req, res, next)
     },
     listen(port: number, callback: () => void) {
         const server = require('http').createServer(this);
@@ -37,8 +65,11 @@ const proto = {
     },
 
     lazyrouter() {
-        this.router.use(middleware.init(this))
-    }
+        if (!this.router) {
+            this.router = new Router({});
+            this.router.use(middleware.init(this));
+        }
+    },
 
 };
 
@@ -47,7 +78,7 @@ export function createApp(): App {
         app.handle(req, res, next);
     } as App;
 
-   
+
     Object.setPrototypeOf(app, proto);
 
 

@@ -12,13 +12,37 @@ const mergeDescriptors = require('merge-descriptors');
  */
 const proto = {
     router: {},
+    cache: {},
+    engines: {},
+    settings: {},
     init() {
         this.router = new router_1.Router();
     },
-    // enabled() {
-    //     return Boolean(this.set(settings));
-    // },
+    set(setting, value) {
+        this.settings[setting] = value;
+        switch (setting) {
+            case 'etag':
+                this.set('etag fn', '');
+                break;
+            case 'query parser':
+                this.set('query parser fn', '');
+                break;
+            case 'trust proxy':
+                this.set('trust proxy fn', '');
+                break;
+        }
+        return this;
+    },
+    enabled(setting) {
+        return Boolean(this.set(setting, ''));
+    },
     handle(req, res, next) {
+        this.lazyrouter();
+        if (!res.send) {
+            res.send = (body) => {
+                console.log(`res.send: ${body}`);
+            };
+        }
         this.router.handle(req, res, next);
     },
     listen(port, callback) {
@@ -32,8 +56,11 @@ const proto = {
         this.router.post(path, ...handlers);
     },
     lazyrouter() {
-        this.router.use(middleware.init(this));
-    }
+        if (!this.router) {
+            this.router = new router_1.Router({});
+            this.router.use(middleware.init(this));
+        }
+    },
 };
 function createApp() {
     const app = function (req, res, next) {

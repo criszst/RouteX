@@ -6,23 +6,21 @@ class Layer {
         this.handle = fn;
         this.name = fn.name || '<anonymous>';
         this.params = undefined;
-        this.path = undefined;
+        this.path = path;
     }
     match(path) {
-        if (this.route && this.route.path === path)
-            return true;
-        else if (this.name === 'expressInit')
-            return true;
-        console.log(this.path + ' ' + this.name);
-        return false;
+        console.log(`-> Comparando path: ${path} com layer path: ${this.path}\n`);
+        return this.path === path || this.path === '*';
     }
     handle_request(req, res, next) {
+        console.log(`-> Executando handler para ${this.path}`);
         const fn = this.handle;
         try {
             fn(req, res, next);
         }
         catch (err) {
-            console.error(err);
+            console.error(`\n-> Erro ao executar handler para ${this.path}:\n`, err);
+            next(err);
         }
     }
 }
