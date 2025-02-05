@@ -3,23 +3,23 @@ import App from "./interfaces/IApp"
 import { proto } from "./middleware/prototype"
 import { merge } from "./libs/merge"
 
-const http = require("http")
+import { IncomingMessage, ServerResponse } from "http"
 
 function createApp(): App {
-  const app = ((req: any, res: any, next: any) => {
+  const app = ((req: IncomingMessage, res: ServerResponse, next: any) => {
     app.handle(req, res, next)
   }) as unknown as App
 
   merge(app, proto, false)
 
-  const req = Object.create(http.IncomingMessage.prototype)
-  const res = Object.create(http.ServerResponse.prototype)
+  const req = Object.create(IncomingMessage.prototype)
+  const res = Object.create(ServerResponse.prototype)
 
-  app.request = Object.create(http.ServerResponse.prototype);
-  app.response = Object.create(http.ServerResponse.prototype);
+  app.request = Object.create(ServerResponse.prototype);
+  app.response = Object.create(ServerResponse.prototype);
 
 
-  app.response.send = function (body: any) {
+  app.response.send = function (body: object | string) {
     if (typeof body === 'object') {
       this.setHeader('Content-Type', 'application/json');
       this.end(JSON.stringify(body), 'utf-8');
@@ -29,7 +29,7 @@ function createApp(): App {
     }
   };
 
-  app.response.json = function (body: any) {
+  app.response.json = function (body: object | string) {
     this.setHeader('Content-Type', 'application/json');
     return this.send(JSON.stringify(body));
   };

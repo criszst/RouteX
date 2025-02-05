@@ -1,12 +1,12 @@
-export const merge = (dest: Object | any, source: Object | any, override?: boolean | true) => {
+export const merge = <Dest, Sorc>(dest: Dest, source: Sorc, override: boolean = true): Dest & Sorc => {
     if (!dest) {
-        throw new TypeError('lança o obj1 aí');
+        throw new TypeError('Coloque o destino ai bb ');
     }
     if (!source) {
-        throw new TypeError('esqueceu do obj2 irmao');
+        throw new TypeError('Ta faltando o sorcito ai');
     }
 
-    for (const sourceName of Object.getOwnPropertyNames(source)) {
+    for (const sourceName of Object.getOwnPropertyNames(source) as Array<keyof Sorc>) {
         if (!override && Object.prototype.hasOwnProperty.call(dest, sourceName)) {
             continue;
         }
@@ -19,5 +19,5 @@ export const merge = (dest: Object | any, source: Object | any, override?: boole
 
     }
 
-    return dest
+    return dest as Dest & Sorc;
 }

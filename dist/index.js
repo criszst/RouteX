@@ -3,10 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("./express");
 const port = 3000;
 express_1.app.get('/', (req, res, next) => {
-    console.log("foo", next);
-    next();
-}, (req, res, next) => {
-    console.log("teste next");
+    console.log("next -> ", next.name);
     next();
 });
 express_1.app.get('/', (req, res) => {

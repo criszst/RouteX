@@ -1,5 +1,8 @@
-import App from '../interfaces/IApp';
+import { isArray } from 'util';
+import GetOptions from '../interfaces/IProtoype'
+
 import { Router } from '../router';
+import { IncomingMessage, ServerResponse } from 'http';
 
 const middleware = require('./init');
 
@@ -7,13 +10,13 @@ export const proto = {
     router: {} as Router,
     cache: {},
     engines: {},
-    settings: {} as any,
+    settings: {} as string | any,
 
     init() {
         this.router = new Router();
     },
 
-    set(setting: any, value: any) {
+    set(setting: string, value: String) {
         this.settings[setting] = value;
 
         switch (setting) {
@@ -31,22 +34,22 @@ export const proto = {
         return this;
     },
 
-    enabled(setting: any) {
+    enabled(setting: string) {
         return Boolean(this.set(setting, ''));
     },
 
-    handle(req: any, res: any, next: any) {
+    handle(req: IncomingMessage, res: ServerResponse | any, next: any) {
         this.lazyrouter();
 
         if (!res.json) {
-            res.json = function (body: any) {
+            res.json = function (body: Object | String) {
                 this.setHeader('Content-Type', 'application/json');
                 return this.send(JSON.stringify(body));
             };
         }
 
         if (!res.send) {
-            res.send = function (body: any) {
+            res.send = function (body: object | string) {
                 if (typeof body === 'object') {
                     this.setHeader('Content-Type', 'application/json');
                     this.end(JSON.stringify(body), 'utf-8');
@@ -63,10 +66,12 @@ export const proto = {
         const server = require('http').createServer(this);
         server.listen(port, callback);
     },
-    get(path: string, ...handlers: Array<(req: any, res: any, next?: any) => void>) {
-        this.router.get(path, ...handlers);
+
+    get(path: GetOptions["path"], ...handlers: GetOptions["handlers"]) {
+        this.router.get(path, ...handlers)
     },
-    post(path: string, ...handlers: Array<(req: any, res: any, next?: any) => void>) {
+    
+    post(path: GetOptions["path"], ...handlers: GetOptions["handlers"]) {
         this.router.post(path, ...handlers);
     },
 

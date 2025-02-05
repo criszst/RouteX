@@ -3,11 +3,8 @@ import { app } from "./express"
 const port = 3000
 
 app.get('/', (req: any, res: any, next: any) => {
-  console.log("foo", next)
-    next()
-}, (req, res, next) => {
-    console.log("teste next")
-    next()
+  console.log("next -> ", next.name);
+  next();
 });
 
 app.get('/', (req: any, res: any) => {

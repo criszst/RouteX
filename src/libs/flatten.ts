@@ -6,9 +6,9 @@
  * @param arr Array que será achatado.
  * @return Array achatado.
  */
-export function flatten(arr: any[]): any[] {
-    return arr.reduce((flat, recFlatten) => {
-      return flat.concat(Array.isArray(recFlatten) ? flatten(recFlatten) : recFlatten);
+export const flatten = <Arr>(arr: Array<Arr | Array<Arr>>): Arr[] => {
+    return arr.reduce<Arr[]>((flat, recFlatten) => {
+      return flat.concat(Array.isArray(recFlatten) ? flatten(recFlatten) : [recFlatten]);
     }, []);
-  }
+  };
   

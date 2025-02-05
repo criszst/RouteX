@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.flatten = flatten;
+exports.flatten = void 0;
 /**
  * Achata arrays aninhados em um único nível.
  *
@@ -9,8 +9,9 @@ exports.flatten = flatten;
  * @param arr Array que será achatado.
  * @return Array achatado.
  */
-function flatten(arr) {
+const flatten = (arr) => {
     return arr.reduce((flat, recFlatten) => {
-        return flat.concat(Array.isArray(recFlatten) ? flatten(recFlatten) : recFlatten);
+        return flat.concat(Array.isArray(recFlatten) ? (0, exports.flatten)(recFlatten) : [recFlatten]);
     }, []);
-}
+};
+exports.flatten = flatten;

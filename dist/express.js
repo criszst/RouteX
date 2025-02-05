@@ -3,16 +3,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.app = void 0;
 const prototype_1 = require("./middleware/prototype");
 const merge_1 = require("./libs/merge");
-const http = require("http");
+const http_1 = require("http");
 function createApp() {
     const app = ((req, res, next) => {
         app.handle(req, res, next);
     });
     (0, merge_1.merge)(app, prototype_1.proto, false);
-    const req = Object.create(http.IncomingMessage.prototype);
-    const res = Object.create(http.ServerResponse.prototype);
-    app.request = Object.create(http.ServerResponse.prototype);
-    app.response = Object.create(http.ServerResponse.prototype);
+    const req = Object.create(http_1.IncomingMessage.prototype);
+    const res = Object.create(http_1.ServerResponse.prototype);
+    app.request = Object.create(http_1.ServerResponse.prototype);
+    app.response = Object.create(http_1.ServerResponse.prototype);
     app.response.send = function (body) {
         if (typeof body === 'object') {
             this.setHeader('Content-Type', 'application/json');

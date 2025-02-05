@@ -1,18 +1,30 @@
 import { Router } from "../router";
+import http from "http";
+
+import GetOptions from '../interfaces/IProtoype'
 
 interface App {
-    request: any;
-    response: any;
-    _router: null;
-    (req: any, res: any, next: any): void
+    request: http.IncomingMessage | any;
+    response: http.ServerResponse | any;
+    _router: Router | null;
+
+    (req: http.IncomingMessage, 
+     res: http.ServerResponse, 
+     next: (err?: Error) => void
+    ): void
 
     init(): void
-    handle(req: any, res: any, next: any): void
+    
+    handle(req: http.IncomingMessage, 
+           res: http.ServerResponse, 
+           next: (err?: Error) => void
+        ): void
+
     listen(port: number, callback: () => void): void
-  
-    get(path: string, ...handlers: Array<(req: any, res: any, next?: any) => void>): void
-    post(path: string, ...handlers: Array<(req: any, res: any, next?: any) => void>): void
-    send: (body: any) => void;
+
+    get(path: GetOptions["path"], ...handlers: GetOptions["handlers"]): void
+    post(path: GetOptions["path"], ...handlers: GetOptions["handlers"]): void
+    send: (body: object | string) => void;
 
     lazyrouter(): void
     

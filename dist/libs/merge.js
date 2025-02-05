@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.merge = void 0;
-const merge = (dest, source, override) => {
+const merge = (dest, source, override = true) => {
     if (!dest) {
-        throw new TypeError('lança o obj1 aí');
+        throw new TypeError('Coloque o destino ai bb ');
     }
     if (!source) {
-        throw new TypeError('esqueceu do obj2 irmao');
+        throw new TypeError('Ta faltando o sorcito ai');
     }
     for (const sourceName of Object.getOwnPropertyNames(source)) {
         if (!override && Object.prototype.hasOwnProperty.call(dest, sourceName)) {
