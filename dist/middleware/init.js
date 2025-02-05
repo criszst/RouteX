@@ -1,8 +1,9 @@
 "use strict";
 const setPrototypeOf = require('setprototypeof');
+// middleware/init.js
 exports.init = function (app) {
     return function expressInit(req, res, next) {
-        setPrototypeOf(res, app.response);
+        Object.setPrototypeOf(res, app.response);
         next();
     };
 };

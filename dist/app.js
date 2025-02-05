@@ -4,7 +4,9 @@ exports.app = void 0;
 exports.createApp = createApp;
 const router_1 = require("./router");
 const middleware = require('./middleware/init');
-const mergeDescriptors = require('merge-descriptors');
+const http = require("http");
+const mixin = require("merge-descriptors");
+const setPrototypeOf = require('setprototypeof');
 /**
  * Prototype for express app
  *
@@ -39,8 +41,21 @@ const proto = {
     handle(req, res, next) {
         this.lazyrouter();
         if (!res.send) {
-            res.send = (body) => {
-                console.log(`res.send: ${body}`);
+            res.send = function (body) {
+                if (typeof body === 'object') {
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end(JSON.stringify(body), 'utf-8');
+                }
+                else {
+                    res.setHeader('Content-Type', 'text/plain');
+                    res.end(body, 'utf-8');
+                }
+            };
+        }
+        if (!res.json) {
+            res.json = function (body) {
+                res.setHeader('Content-Type', 'application/json');
+                res.send(JSON.stringify(body));
             };
         }
         this.router.handle(req, res, next);
@@ -66,6 +81,41 @@ function createApp() {
     const app = function (req, res, next) {
         app.handle(req, res, next);
     };
+    const req = Object.create(http.IncomingMessage.prototype);
+    const res = Object.create(http.ServerResponse.prototype);
+    app.response = res;
+    res.send = function (body) {
+        if (typeof body === 'object') {
+            this.setHeader('Content-Type', 'application/json');
+            this.end(JSON.stringify(body), 'utf-8');
+        }
+        else {
+            this.setHeader('Content-Type', 'text/plain');
+            this.end(body, 'utf-8');
+        }
+        return this;
+    };
+    res.json = function (body) {
+        this.setHeader('Content-Type', 'application/json');
+        this.end(JSON.stringify(body));
+        return this;
+    };
+    app.request = Object.create(req, {
+        app: {
+            configurable: true,
+            enumerable: true,
+            writable: true,
+            value: app,
+        }
+    });
+    app.response = Object.create(res, {
+        app: {
+            configurable: true,
+            enumerable: true,
+            writable: true,
+            value: app,
+        }
+    });
     Object.setPrototypeOf(app, proto);
     app.init();
     return app;

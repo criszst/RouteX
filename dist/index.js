@@ -3,20 +3,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("./express");
 const port = 3000;
 express_1.app.get('/', (req, res, next) => {
-    console.log('\nMiddleware 1');
+    console.log("foo", next);
+    next();
+}, (req, res, next) => {
+    console.log("teste next");
     next();
 });
 express_1.app.get('/', (req, res) => {
-    res.writeHead(200);
-    console.log('\nMiddleware 2');
-    res.write('Resposta do middleware 2');
-    res.send("hello world");
-    res.end();
+    res.json({ hello: 'world' });
 });
 express_1.app.post('/post', (req, res) => {
     res.writeHead(200);
-    res.write('POST request recebido ' + req.name);
-    res.send('post send');
+    res.write('Data post :)');
     res.end();
 });
 express_1.app.listen(port, () => {
