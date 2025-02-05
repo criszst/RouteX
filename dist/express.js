@@ -1,64 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.app = void 0;
-const router_1 = require("./router");
-const middleware = require("./middleware/init");
+const prototype_1 = require("./middleware/prototype");
+const merge_1 = require("./libs/merge");
 const http = require("http");
-const mixin = require("merge-descriptors");
-const proto = {
-    router: {},
-    _router: null,
-    init() {
-        this.router = new router_1.Router();
-    },
-    lazyrouter() {
-        if (!this.router) {
-            this.router = new router_1.Router({});
-            this.router.use(middleware.init(this));
-        }
-    },
-    handle(req, res, next) {
-        this.lazyrouter();
-        if (!res.send) {
-            res.send = function (body) {
-                if (typeof body === 'object') {
-                    res.setHeader('Content-Type', 'application/json');
-                    res.end(JSON.stringify(body), 'utf-8');
-                }
-                else {
-                    res.setHeader('Content-Type', 'text/plain');
-                    res.end(body, 'utf-8');
-                }
-            };
-        }
-        if (!res.json) {
-            res.json = function (body) {
-                res.setHeader('Content-Type', 'application/json');
-                res.send(JSON.stringify(body));
-            };
-        }
-        this.router.handle(req, res, next);
-    },
-    listen(port, callback) {
-        const server = http.createServer(this);
-        return server.listen(port, callback);
-    },
-    get(path, ...handlers) {
-        this.lazyrouter();
-        this.router.get(path, ...handlers);
-    },
-    post(path, ...handlers) {
-        this.lazyrouter();
-        this.router.post(path, ...handlers);
-    }
-};
 function createApp() {
     const app = ((req, res, next) => {
         app.handle(req, res, next);
     });
-    mixin(app, proto, false);
+    (0, merge_1.merge)(app, prototype_1.proto, false);
     const req = Object.create(http.IncomingMessage.prototype);
     const res = Object.create(http.ServerResponse.prototype);
+    app.request = Object.create(http.ServerResponse.prototype);
     app.response = Object.create(http.ServerResponse.prototype);
     app.response.send = function (body) {
         if (typeof body === 'object') {
