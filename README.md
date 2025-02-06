@@ -33,12 +33,6 @@ So, create a dist folder bc node can't read typescript files directly:
 npm run build
 ```
 
-If do you want run all the tests, just write (this is not necessary for run the ):
-
-```
-npm run tests
-```
-
 After alll that, run the minimal express :)
 ```
 npm run start
