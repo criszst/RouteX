@@ -19,7 +19,7 @@ git clone https://github.com/criszst/MyExpress.git
 
 Open the directory
 ```
-cd MyExpres
+cd MyExpress
 ```
 
 Then, install all packages of npm:
