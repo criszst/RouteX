@@ -8,7 +8,7 @@ function createApp() {
     const app = ((req, res, next) => {
         app.handle(req, res, next);
     });
-    (0, merge_1.merge)(app, prototype_1.proto, false);
+    (0, merge_1.merge)(app, prototype_1.prototype, false);
     const req = Object.create(http_1.IncomingMessage.prototype);
     const res = Object.create(http_1.ServerResponse.prototype);
     app.request = Object.create(http_1.ServerResponse.prototype);

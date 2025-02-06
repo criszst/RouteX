@@ -1,6 +1,6 @@
 import App from "./interfaces/IApp"
 
-import { proto } from "./middleware/prototype"
+import { prototype } from "./middleware/prototype"
 import { merge } from "./libs/merge"
 
 import { IncomingMessage, ServerResponse } from "http"
@@ -10,7 +10,7 @@ function createApp(): App {
     app.handle(req, res, next)
   }) as unknown as App
 
-  merge(app, proto, false)
+  merge(app, prototype, false)
 
   const req = Object.create(IncomingMessage.prototype)
   const res = Object.create(ServerResponse.prototype)

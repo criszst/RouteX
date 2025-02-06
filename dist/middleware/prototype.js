@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.proto = void 0;
+exports.prototype = void 0;
 const router_1 = require("../router");
 const middleware = require('./init');
-exports.proto = {
+exports.prototype = {
     router: {},
     cache: {},
     engines: {},

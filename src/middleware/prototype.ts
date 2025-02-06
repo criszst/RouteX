@@ -6,7 +6,7 @@ import { IncomingMessage, ServerResponse } from 'http';
 
 const middleware = require('./init');
 
-export const proto = {
+export const prototype = {
     router: {} as Router,
     cache: {},
     engines: {},
