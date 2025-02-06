@@ -26,7 +26,12 @@ Then, install all packages of npm:
 
 ```
 npm install
+
 ```
+If do you want run all the tests... (this is not necessary for run the project, its just a good practice):
+
+```
+npm run tests
 
 So, create a dist folder bc node can't read typescript files directly:
 ```
