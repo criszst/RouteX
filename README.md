@@ -7,3 +7,33 @@ A simple express that I made for fun. It's really not completely, but i pretend 
 - [ ] Some interfaces to clean up all the code (at this point i only add one interface)
 - [ ] Add more middlewares
 - [ ] Add tests
+
+
+### INSTALL
+
+First, clone the repository with git:
+
+```
+git clone https://github.com/criszst/MyExpress.git
+```
+
+Open the directory
+```
+cd MyExpres
+```
+
+Then, install all packages of npm:
+
+```
+npm install
+```
+
+So, create a dist folder bc node can't read typescript files directly:
+```
+npm run build
+```
+
+After alll that, run the minimal express :)
+```
+npm run start
+```
