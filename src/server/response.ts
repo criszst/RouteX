@@ -1,6 +1,6 @@
 import ExtendedServerResponse from "../interfaces/IServerResponse";
 
-import mime from "mime";
+import mime from 'mime';
 
 export class Response {
 
