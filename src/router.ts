@@ -46,10 +46,10 @@ export class Router {
       let layer;
       let match;
       let route;
-
+  
       while (match !== true && idx < stack.length) {
         const path = this.getPathName(req);
-
+  
         layer = stack[idx++];
         match = this.matchLayer(layer, path);
         route = layer.route;
@@ -58,20 +58,21 @@ export class Router {
           continue;
         }
   
-    
         if (!route) {
           continue;
         }
   
         route.stack[0].handle_request(req, res, next);
       }
-
-      if (match) {
-        layer?.handle_request(req, res, next);
+  
+      if (!match && out) {
+        out(); // Call the outer layer's next function
+      } else if (!match) {
+        res.statusCode = 404;
+        res.end('Not Found');
       }
-      
-    }
-
+    };
+  
     next();
   }
 
@@ -95,12 +96,19 @@ export class Router {
 
 
 
-  use(fn: Function): Router {
-    const layer = new Layer('/', {}, fn);
-    layer.route = undefined;
-    
-    this.stack.push(layer);
-
+  use(fn: Function | Function[]): Router {
+    if (Array.isArray(fn)) {
+      fn.forEach((handler) => {
+        const layer = new Layer('/', {}, handler);
+        layer.route = undefined;
+        this.stack.push(layer);
+      });
+    } else {
+      const layer = new Layer('/', {}, fn);
+      layer.route = undefined;
+      this.stack.push(layer);
+    }
+  
     return this;
   }
 

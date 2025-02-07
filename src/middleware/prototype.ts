@@ -4,6 +4,9 @@ import GetOptions from '../interfaces/IProtoype'
 import { Router } from '../router';
 import { IncomingMessage, ServerResponse } from 'http';
 
+import mime from 'mime';
+import { Response } from '../server/response';
+
 const middleware = require('./init');
 
 export const prototype = {
@@ -27,7 +30,7 @@ export const prototype = {
                 this.set('query parser fn', '');
                 break;
             case 'trust proxy':
-                this.set('trust proxy fn', ''); 
+                this.set('trust proxy fn', '');
                 break;
         }
 
@@ -38,30 +41,18 @@ export const prototype = {
         return Boolean(this.set(setting, ''));
     },
 
+
+
     handle(req: IncomingMessage, res: ServerResponse | any, next: any) {
         this.lazyrouter();
 
-        if (!res.json) {
-            res.json = function (body: Object | String) {
-                this.setHeader('Content-Type', 'application/json');
-                return this.send(JSON.stringify(body));
-            };
-        }
+        Response.send(res);
+        Response.json(res);
+        Response.download(res);
 
-        if (!res.send) {
-            res.send = function (body: object | string) {
-                if (typeof body === 'object') {
-                    this.setHeader('Content-Type', 'application/json');
-                    this.end(JSON.stringify(body), 'utf-8');
-                } else {
-                    this.setHeader('Content-Type', 'text/plain');
-                    this.end(body, 'utf-8');
-                }
-            };
-        }
         this.router.handle(req, res, next);
     },
-    
+
     listen(port: number, callback: () => void) {
         const server = require('http').createServer(this);
         server.listen(port, callback);
@@ -70,16 +61,17 @@ export const prototype = {
     get(path: GetOptions["path"], ...handlers: GetOptions["handlers"]) {
         this.router.get(path, ...handlers)
     },
-    
+
     post(path: GetOptions["path"], ...handlers: GetOptions["handlers"]) {
         this.router.post(path, ...handlers);
     },
+
 
     lazyrouter() {
         if (!this.router) {
             this.router = new Router({});
             this.router.use(middleware.init(this));
-          }
+        }
     },
 
 };

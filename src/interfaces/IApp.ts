@@ -26,6 +26,8 @@ interface App {
     post(path: GetOptions["path"], ...handlers: GetOptions["handlers"]): void
     send: (body: object | string) => void;
 
+    download(path: string): void;
+
     lazyrouter(): void
     
     router: Router

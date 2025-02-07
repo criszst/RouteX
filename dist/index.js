@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("./express");
 const port = 3000;
 express_1.app.get('/', (req, res, next) => {
+    res.download('./download.test.txt');
     console.log("next -> ", next.name);
     next();
 });

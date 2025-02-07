@@ -33,7 +33,6 @@ export class Route {
     
     this.methods['post'] = true;
   }
-  
 
   dispatch(req: IncomingMessage, res: ServerResponse, done: () => void): void { }
 

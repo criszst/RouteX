@@ -10,6 +10,17 @@ function createApp(): App {
     app.handle(req, res, next)
   }) as unknown as App
 
+  const appReference = (obj: object) => {
+    return Object.create(obj, {
+      app: {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        value: app,
+      },
+    });
+  };
+
   merge(app, prototype, false)
 
   const req = Object.create(IncomingMessage.prototype)
@@ -18,41 +29,11 @@ function createApp(): App {
   app.request = Object.create(ServerResponse.prototype);
   app.response = Object.create(ServerResponse.prototype);
 
-
-  app.response.send = function (body: object | string) {
-    if (typeof body === 'object') {
-      this.setHeader('Content-Type', 'application/json');
-      this.end(JSON.stringify(body), 'utf-8');
-    } else {
-      this.setHeader('Content-Type', 'text/plain');
-      this.end(body, 'utf-8');
-    }
-  };
-
-  app.response.json = function (body: object | string) {
-    this.setHeader('Content-Type', 'application/json');
-    return this.send(JSON.stringify(body));
-  };
-
-  app.request = Object.create(req, {
-    app: {
-      configurable: true,
-      enumerable: true,
-      writable: true,
-      value: app,
-    }
-  })
-
-  app.response = Object.create(res, {
-    app: {
-      configurable: true,
-      enumerable: true,
-      writable: true,
-      value: app,
-    }
-  })
+  app.request = Object.create(req, appReference.prototype);
+  app.response = Object.create(res, appReference.prototype);
 
   app.init()
+
   return app
 }
 

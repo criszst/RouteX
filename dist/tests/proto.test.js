@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const globals_1 = require("@jest/globals");
 const prototype = require('../middleware/prototype');
 const proto = prototype.prototype;
-(0, globals_1.describe)('protoo', () => {
+(0, globals_1.describe)('proto', () => {
     (0, globals_1.it)('should have a router property', () => {
         (0, globals_1.expect)(proto).toHaveProperty('router');
     });

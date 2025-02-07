@@ -48,8 +48,12 @@ class Router {
                 }
                 route.stack[0].handle_request(req, res, next);
             }
-            if (match) {
-                layer === null || layer === void 0 ? void 0 : layer.handle_request(req, res, next);
+            if (!match && out) {
+                out(); // Call the outer layer's next function
+            }
+            else if (!match) {
+                res.statusCode = 404;
+                res.end('Not Found');
             }
         };
         next();
@@ -71,9 +75,18 @@ class Router {
         }
     }
     use(fn) {
-        const layer = new layer_1.Layer('/', {}, fn);
-        layer.route = undefined;
-        this.stack.push(layer);
+        if (Array.isArray(fn)) {
+            fn.forEach((handler) => {
+                const layer = new layer_1.Layer('/', {}, handler);
+                layer.route = undefined;
+                this.stack.push(layer);
+            });
+        }
+        else {
+            const layer = new layer_1.Layer('/', {}, fn);
+            layer.route = undefined;
+            this.stack.push(layer);
+        }
         return this;
     }
 }

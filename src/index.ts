@@ -3,6 +3,7 @@ import { app } from "./express"
 const port = 3000
 
 app.get('/', (req: any, res: any, next: any) => {
+  res.download('./download.test.txt');
   console.log("next -> ", next.name);
   next();
 });

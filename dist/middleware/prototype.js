@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.prototype = void 0;
 const router_1 = require("../router");
+const response_1 = require("../server/response");
 const middleware = require('./init');
 exports.prototype = {
     router: {},
@@ -31,24 +32,9 @@ exports.prototype = {
     },
     handle(req, res, next) {
         this.lazyrouter();
-        if (!res.json) {
-            res.json = function (body) {
-                this.setHeader('Content-Type', 'application/json');
-                return this.send(JSON.stringify(body));
-            };
-        }
-        if (!res.send) {
-            res.send = function (body) {
-                if (typeof body === 'object') {
-                    this.setHeader('Content-Type', 'application/json');
-                    this.end(JSON.stringify(body), 'utf-8');
-                }
-                else {
-                    this.setHeader('Content-Type', 'text/plain');
-                    this.end(body, 'utf-8');
-                }
-            };
-        }
+        response_1.Response.send(res);
+        response_1.Response.json(res);
+        response_1.Response.download(res);
         this.router.handle(req, res, next);
     },
     listen(port, callback) {
