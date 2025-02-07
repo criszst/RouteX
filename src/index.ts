@@ -33,5 +33,5 @@ app.post('/post', (req: any, res: extendsServerResponse) => {
 });
 
 app.listen(port, () => {
-  console.log(`Servidor rodando na porta ${port}:\n-> http://localhost:${port}`);
+  console.log(`Server running on port ${port}:\n-> http://localhost:${port}`);
 });

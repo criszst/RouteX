@@ -42,3 +42,5 @@ After alll that, run the minimal express :)
 ```
 npm run start
 ```
+
+The server is run on port 3000, so just go to http://localhost:3000 and you've see the 'hello word!' message
