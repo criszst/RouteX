@@ -4,7 +4,7 @@ A simple express that I made for fun. It's really not completely, but i pretend 
 ### CHECKLIST:
 - [x] __Normal APP, with send, post and also res, req and next methods__
 - [x] Recreate the "merge-descriptors" lib, just for no dependency of the lib. Btw, this is more security
-- [ ] Some interfaces to clean up all the code (at this point i only add one interface)
+- [x] Some interfaces to clean up all the code
 - [ ] Add more middlewares
 - [ ] Add tests
 
