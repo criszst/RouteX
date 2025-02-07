@@ -8,7 +8,7 @@ function createApp() {
     const app = ((req, res, next) => {
         app.handle(req, res, next);
     });
-    const addAPPReference = (obj) => {
+    const appReference = (obj) => {
         return Object.create(obj, {
             app: {
                 configurable: true,
@@ -23,8 +23,8 @@ function createApp() {
     const res = Object.create(http_1.ServerResponse.prototype);
     app.request = Object.create(http_1.ServerResponse.prototype);
     app.response = Object.create(http_1.ServerResponse.prototype);
-    app.request = Object.create(req, addAPPReference.prototype);
-    app.response = Object.create(res, addAPPReference.prototype);
+    app.request = Object.create(req, appReference.prototype);
+    app.response = Object.create(res, appReference.prototype);
     app.init();
     return app;
 }

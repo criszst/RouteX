@@ -2,8 +2,26 @@ import ExtendedServerResponse from "../interfaces/IServerResponse";
 
 import mime from "mime";
 
-
 export class Response {
+
+    public static send(res: ExtendedServerResponse) {
+        res.send = function (body: object | string) {
+            if (typeof body === 'object') {
+                this.setHeader('Content-Type', 'application/json');
+                this.end(JSON.stringify(body), 'utf-8');
+            } else {
+                this.setHeader('Content-Type', 'text/plain');
+                this.end(body, 'utf-8');
+            }
+        };
+    }
+
+    public static json(res: ExtendedServerResponse) {
+        res.json = function (body: Object | String) {
+            this.setHeader('Content-Type', 'application/json');
+            return this.send(JSON.stringify(body));
+        };
+    }
 
     public static download(res: ExtendedServerResponse) {
         res.download = function (path: string) {
@@ -16,25 +34,6 @@ export class Response {
 
             const fileStream = fs.createReadStream(path);
             fileStream.pipe(this);
-        };
-    }
-
-    public static json(res: ExtendedServerResponse) {
-        res.json = function (body: Object | String) {
-            this.setHeader('Content-Type', 'application/json');
-            return this.send(JSON.stringify(body));
-        };
-    }
-
-    public static send(res: ExtendedServerResponse) {
-        res.send = function (body: object | string) {
-            if (typeof body === 'object') {
-                this.setHeader('Content-Type', 'application/json');
-                this.end(JSON.stringify(body), 'utf-8');
-            } else {
-                this.setHeader('Content-Type', 'text/plain');
-                this.end(body, 'utf-8');
-            }
         };
     }
 }

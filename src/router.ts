@@ -17,18 +17,18 @@ export class Router {
     this.strict = options.strict || false;
   }
 
-  get(path: string, ...handlers: Array<(req: IncomingMessage, res: ServerResponse, next?: Function) => void>): void {
+  public get(path: string, ...handlers: Array<(req: IncomingMessage, res: ServerResponse, next?: Function) => void>): void {
     const route = this.route(path);
     route.get(...handlers);
   }
 
-  post(path: string, ...handlers: Array<(req: IncomingMessage, res: ServerResponse, next?: Function) => void>): void {
+  public post(path: string, ...handlers: Array<(req: IncomingMessage, res: ServerResponse, next?: Function) => void>): void {
     const route = this.route(path);
     route.post(...handlers);
 
   }
 
-  route(path: string): Route {
+  private route(path: string): Route {
     const route = new Route(path);
     const layer = new Layer(path, {}, route.dispatch.bind(route));
 
@@ -37,7 +37,7 @@ export class Router {
     return route;
   }
 
-  handle(req: IncomingMessage, res: ServerResponse, out?: Function): void {
+  public handle(req: IncomingMessage, res: ServerResponse, out?: Function): void {
     const self = this;
     const stack = self.stack;
     let idx = 0;
@@ -76,7 +76,7 @@ export class Router {
     next();
   }
 
-  getPathName(req: any): any {
+ private getPathName(req: any): any {
     try {
       return parseUrl(req).pathname;
     }
@@ -86,7 +86,7 @@ export class Router {
     }
   }
 
-  matchLayer(layer: Layer, path: any) {
+  private matchLayer(layer: Layer, path: any) {
     try {
       return layer.match(path);
     } catch (err) {
@@ -96,7 +96,7 @@ export class Router {
 
 
 
-  use(fn: Function | Function[]): Router {
+  public use(fn: Function | Function[]): Router {
     if (Array.isArray(fn)) {
       fn.forEach((handler) => {
         const layer = new Layer('/', {}, handler);
