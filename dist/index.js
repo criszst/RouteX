@@ -19,5 +19,5 @@ express_1.app.post('/post', (req, res) => {
     res.end();
 });
 express_1.app.listen(port, () => {
-    console.log(`Servidor rodando na porta ${port}:\n-> http://localhost:${port}`);
+    console.log(`Server running on port ${port}:\n-> http://localhost:${port}`);
 });

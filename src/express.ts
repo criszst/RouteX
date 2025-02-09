@@ -26,9 +26,6 @@ function createApp(): App {
   const req = Object.create(IncomingMessage.prototype)
   const res = Object.create(ServerResponse.prototype)
 
-  app.request = Object.create(ServerResponse.prototype);
-  app.response = Object.create(ServerResponse.prototype);
-
   app.request = Object.create(req, appReference.prototype);
   app.response = Object.create(res, appReference.prototype);
 
