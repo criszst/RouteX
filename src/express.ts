@@ -6,11 +6,11 @@ import { merge } from "./libs/merge"
 import { IncomingMessage, ServerResponse } from "http"
 
 function createApp(): App {
-  const app = ((req: IncomingMessage, res: ServerResponse, next: any) => {
+  const app = ((req: IncomingMessage, res: ServerResponse, next: any): void => {
     app.handle(req, res, next)
   }) as unknown as App
 
-  const appReference = (obj: object) => {
+  const appReference = (obj: object): object => {
     return Object.create(obj, {
       app: {
         configurable: true,

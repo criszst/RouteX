@@ -4,7 +4,7 @@ import mime from 'mime';
 
 export class Response {
 
-    public static send(res: ExtendedServerResponse) {
+    public static send(res: ExtendedServerResponse): void {
         res.send = function (body: object | string) {
             if (typeof body === 'object') {
                 this.setHeader('Content-Type', 'application/json');
@@ -16,14 +16,14 @@ export class Response {
         };
     }
 
-    public static json(res: ExtendedServerResponse) {
+    public static json(res: ExtendedServerResponse): void {
         res.json = function (body: Object | String) {
             this.setHeader('Content-Type', 'application/json');
             return this.send(JSON.stringify(body));
         };
     }
 
-    public static download(res: ExtendedServerResponse) {
+    public static download(res: ExtendedServerResponse): void {
         res.download = function (path: string) {
             const fs = require('fs');
             const contentType = mime.getType(path) || 'application/octet-stream';

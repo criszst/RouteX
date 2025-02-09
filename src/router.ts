@@ -1,6 +1,7 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import { Route } from './route';
 import { Layer } from './layer';
+import GetOptions from './interfaces/IProtoype';
 const parseUrl = require('parseurl');
 
 // TODO: generate doc from each method
@@ -17,12 +18,13 @@ export class Router {
     this.strict = options.strict || false;
   }
 
-  public get(path: string, ...handlers: Array<(req: IncomingMessage, res: ServerResponse, next?: Function) => void>): void {
+
+  public get(path: GetOptions["path"], ...handlers: GetOptions["handlers"]): void {
     const route = this.route(path);
     route.get(...handlers);
   }
 
-  public post(path: string, ...handlers: Array<(req: IncomingMessage, res: ServerResponse, next?: Function) => void>): void {
+  public post(path: GetOptions["path"], ...handlers: GetOptions["handlers"]): void {
     const route = this.route(path);
     route.post(...handlers);
 
