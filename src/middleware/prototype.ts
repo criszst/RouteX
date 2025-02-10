@@ -1,10 +1,8 @@
-import { isArray } from 'util';
 import GetOptions from '../interfaces/IProtoype'
 
 import { Router } from '../router';
 import { IncomingMessage, ServerResponse } from 'http';
 
-import mime from 'mime';
 import { Response } from '../server/response';
 
 const middleware = require('./init');
@@ -55,7 +53,7 @@ export const prototype = {
 
     listen(port: number, callback: () => void) {
         const server = require('http').createServer(this);
-        server.listen(port, callback);
+        server.listen(port, callback)
     },
 
     get(path: GetOptions["path"], ...handlers: GetOptions["handlers"]): void {

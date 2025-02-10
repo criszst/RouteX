@@ -1,7 +1,18 @@
 module.exports = {
     getType: jest.fn((path): string => {
-      if (path.endsWith('.pdf')) return 'application/pdf';
-      if (path.endsWith('.jpg')) return 'image/jpeg';
+      const paths = {
+        '.pdf': 'application/pdf',
+        '.jpg': 'image/jpeg',
+        'json': 'application/json',
+        'html': 'text/html',
+      } as Record<string, string>;
+
+      for (const extension in paths) {
+        if (path.endsWith(extension)) {
+          return paths[extension];
+        }
+      }
+
       return 'application/octet-stream';
     }),
   };
