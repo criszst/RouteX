@@ -34,5 +34,15 @@ class Response {
             fileStream.pipe(this);
         };
     }
+    static redirect(res) {
+        res.redirect = function (url) {
+            if (!url) {
+                return;
+            }
+            this.statusCode = 302;
+            this.setHeader('Location', url);
+            this.end();
+        };
+    }
 }
 exports.Response = Response;

@@ -13,6 +13,9 @@ express_1.app.get('/download', (req, res) => {
     res.download('./download.test.txt');
     res.write('Downloading...');
 });
+express_1.app.get('/reds', (req, res) => {
+    res.redirect('/');
+});
 express_1.app.post('/post', (req, res) => {
     res.writeHead(200);
     res.write('Data post :)');

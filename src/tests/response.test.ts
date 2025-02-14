@@ -4,12 +4,14 @@ import mime from 'mime';
 import { Response } from "../server/response";
 import ExtendedServerResponse from "../interfaces/IServerResponse";
 
+const fs = require('fs');
+
 
 describe('Response', () => {
-    it('should set JSON content type and send JSON string for object input in send method', () => {
+    it('should set JSON content type and send JSON string for object input in send method', (): void => {
         const res = {
             setHeader: jest.fn(),
-            end: jest.fn()
+            end: jest.fn(),
         } as unknown as ExtendedServerResponse;
 
         Response.send(res);
@@ -20,7 +22,7 @@ describe('Response', () => {
         expect(res.end).toHaveBeenCalledWith(JSON.stringify(body), 'utf-8');
     });
 
-    it('should set plain text content type and send string for string input in send method', () => {
+    it('should set plain text content type and send string for string input in send method', (): void => {
         const res = {
             setHeader: jest.fn(),
             end: jest.fn()
@@ -28,33 +30,36 @@ describe('Response', () => {
 
         Response.send(res);
         const body = 'plain text';
+
         res.send(body);
 
         expect(res.setHeader).toHaveBeenCalledWith('Content-Type', 'text/plain');
         expect(res.end).toHaveBeenCalledWith(body, 'utf-8');
     });
 
-    it('should set JSON content type and send JSON string in json method', () => {
+    it('should set JSON content type and send JSON string in json method', (): void => {
         const res = {
             setHeader: jest.fn(),
             send: jest.fn()
         } as unknown as ExtendedServerResponse;
 
         Response.json(res);
+
         const body = { key: 'value' };
+
         res.json(body);
 
         expect(res.setHeader).toHaveBeenCalledWith('Content-Type', 'application/json');
         expect(res.send).toHaveBeenCalledWith(JSON.stringify(body));
     });
 
-    it('should set appropriate headers and stream file in download method', () => {
+    it('should set appropriate headers and stream file in download method', (): void => {
         const res = {
             setHeader: jest.fn(),
             pipe: jest.fn()
         } as unknown as ExtendedServerResponse;
 
-        const fs = require('fs');
+
         jest.spyOn(fs, 'createReadStream').mockReturnValue({
             pipe: jest.fn()
         });
@@ -62,6 +67,7 @@ describe('Response', () => {
         jest.spyOn(mime, 'getType').mockReturnValue('text/plain');
 
         Response.download(res);
+
         const path = '/path/to/file.txt';
         res.download(path);
 
@@ -69,4 +75,20 @@ describe('Response', () => {
         expect(res.setHeader).toHaveBeenCalledWith('Content-Disposition', 'attachment; filename=file.txt');
         expect(fs.createReadStream).toHaveBeenCalledWith(path);
     });
+
+    it('should redirect properly to a new url', (): void => {
+        const res = {
+            setHeader: jest.fn(),
+            redirect: jest.fn(),
+            end: jest.fn()
+        } as unknown as ExtendedServerResponse;
+
+        const url = 'https://example.com';
+
+        Response.redirect(res);
+        res.redirect(url);
+
+        expect(res.setHeader).toHaveBeenCalledWith('Location', url);
+        expect(res.end).toHaveBeenCalled();
+    })
 });

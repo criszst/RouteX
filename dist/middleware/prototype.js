@@ -35,6 +35,7 @@ exports.prototype = {
         response_1.Response.send(res);
         response_1.Response.json(res);
         response_1.Response.download(res);
+        response_1.Response.redirect(res);
         this.router.handle(req, res, next);
     },
     listen(port, callback) {

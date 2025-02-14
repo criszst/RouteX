@@ -7,30 +7,38 @@ const port = 3000
 // TODO: Change the type of response, cause it is not the same as the one in express
 
 // just improvising
-type extendsServerResponse = ServerResponse extends  ExtendedServerResponse? ExtendedServerResponse : any
+type extendsServerResponse<T> = ServerResponse extends T? ServerResponse : any
+type SvResponse = extendsServerResponse<ExtendedServerResponse>
 
-app.get('/', (req: any, res: extendsServerResponse, next: any) => {
+app.get('/', (req: SvResponse, res: SvResponse, next: any) => {
   console.log("next -> ", next.name);
   next();
 });
 
 
-app.get('/', (req: any, res: extendsServerResponse) => {
+app.get('/', (req: SvResponse, res: SvResponse) => {
   res.json({'hello': 'world'})
 });
 
-app.get('/download', (req: any, res: any) => {
+
+app.get('/download', (req: SvResponse, res: SvResponse) => {
 
   res.download('./download.test.txt');
   res.write('Downloading...')
 });
 
 
-app.post('/post', (req: any, res: extendsServerResponse) => {
+app.get('/reds', (req: SvResponse, res: SvResponse) => {
+  res.redirect('/');
+})
+
+
+app.post('/post', (req: SvResponse, res: SvResponse) => {
   res.writeHead(200)
   res.write('Data post :)');
   res.end();
 });
+
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}:\n-> http://localhost:${port}`);

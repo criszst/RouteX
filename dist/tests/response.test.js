@@ -6,11 +6,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const globals_1 = require("@jest/globals");
 const mime_1 = __importDefault(require("mime"));
 const response_1 = require("../server/response");
+const fs = require('fs');
 (0, globals_1.describe)('Response', () => {
     (0, globals_1.it)('should set JSON content type and send JSON string for object input in send method', () => {
         const res = {
             setHeader: jest.fn(),
-            end: jest.fn()
+            end: jest.fn(),
         };
         response_1.Response.send(res);
         const body = { key: 'value' };
@@ -45,7 +46,6 @@ const response_1 = require("../server/response");
             setHeader: jest.fn(),
             pipe: jest.fn()
         };
-        const fs = require('fs');
         jest.spyOn(fs, 'createReadStream').mockReturnValue({
             pipe: jest.fn()
         });
@@ -56,5 +56,17 @@ const response_1 = require("../server/response");
         (0, globals_1.expect)(res.setHeader).toHaveBeenCalledWith('Content-Type', 'text/plain');
         (0, globals_1.expect)(res.setHeader).toHaveBeenCalledWith('Content-Disposition', 'attachment; filename=file.txt');
         (0, globals_1.expect)(fs.createReadStream).toHaveBeenCalledWith(path);
+    });
+    (0, globals_1.it)('should redirect properly to a new url', () => {
+        const res = {
+            setHeader: jest.fn(),
+            redirect: jest.fn(),
+            end: jest.fn()
+        };
+        const url = 'https://example.com';
+        response_1.Response.redirect(res);
+        res.redirect(url);
+        (0, globals_1.expect)(res.setHeader).toHaveBeenCalledWith('Location', url);
+        (0, globals_1.expect)(res.end).toHaveBeenCalled();
     });
 });

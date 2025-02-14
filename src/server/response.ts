@@ -36,4 +36,16 @@ export class Response {
             fileStream.pipe(this);
         };
     }
+
+    public static redirect(res: ExtendedServerResponse): void {
+        res.redirect = function (url: string): void {
+            if (!url) {
+                return;
+            }
+
+            this.statusCode = 302;
+            this.setHeader('Location', url);
+            this.end();
+        };
+    }
 }
