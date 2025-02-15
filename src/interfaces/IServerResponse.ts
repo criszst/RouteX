@@ -1,4 +1,5 @@
 import { ServerResponse } from "http";
+import Options from "./IOptions";
 
 interface ExtendedServerResponse extends ServerResponse {
     send: (body: object | string) => void;
@@ -7,7 +8,7 @@ interface ExtendedServerResponse extends ServerResponse {
     download: (path: string) => void;
     redirect: (url: string) => void;
 
-    sendFile: (path: string, options: Array<string>, fn?: Function) => void;
+    sendFile: (path: string, options: Options, fn?: Function) => void;
 }
 
 export default ExtendedServerResponse;

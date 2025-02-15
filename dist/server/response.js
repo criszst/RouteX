@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Response = void 0;
 const mime_1 = __importDefault(require("mime"));
 const fs_1 = __importDefault(require("fs"));
+const path_1 = require("path");
 class Response {
     static send(res) {
         res.send = function (body) {
@@ -46,13 +47,30 @@ class Response {
             this.end();
         };
     }
+    // yea i know this is not the same function on express, but i wanna make a something different
+    // btw later i change this
     static sendFile(res) {
-        res.sendFile = function (path, options, fn) {
+        res.sendFile = function (path, options, callback) {
+            const attachment = (options === null || options === void 0 ? void 0 : options.attachment) !== undefined ? options.attachment : false;
+            const maxAge = (options === null || options === void 0 ? void 0 : options.maxAge) !== undefined ? options.maxAge : 0;
+            const root = (options === null || options === void 0 ? void 0 : options.root) !== undefined ? options.root : '';
+            const headers = (options === null || options === void 0 ? void 0 : options.headers) !== undefined ? options.headers : {};
             const contentType = mime_1.default.getType(path) || 'application/octet-stream';
-            const fileText = fs_1.default.readFileSync(path);
+            const stats = fs_1.default.statSync(path);
+            let fileContent;
+            if (stats.size < 1024 * 1024)
+                fileContent = fs_1.default.readFileSync(path);
+            else
+                fileContent = fs_1.default.createReadStream(path);
             this.setHeader('Content-Type', contentType);
-            this.write(fileText);
-            this.end();
+            this.setHeader('Content-Disposition', `${attachment ? 'attachment' : 'inline'}; filename=${(0, path_1.basename)(path)}`);
+            if (callback) {
+                callback.call(this, JSON.stringify(fileContent));
+            }
+            else {
+                this.write(fileContent);
+                this.end();
+            }
         };
     }
 }

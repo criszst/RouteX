@@ -9,20 +9,21 @@ express_1.app.get('/', (req, res, next) => {
 express_1.app.get('/', (req, res) => {
     res.json({ 'hello': 'world' });
 });
+express_1.app.post('/post', (req, res) => {
+    res.writeHead(200);
+    res.write('Data post :)');
+    res.end();
+});
 express_1.app.get('/download', (req, res) => {
     res.download('./download.test.txt');
-    res.write('Downloading...');
 });
 express_1.app.get('/reds', (req, res) => {
     res.redirect('/');
 });
 express_1.app.get('/send', (req, res) => {
-    res.sendFile('./download.test.txt');
-});
-express_1.app.post('/post', (req, res) => {
-    res.writeHead(200);
-    res.write('Data post :)');
-    res.end();
+    res.sendFile('./download.test.txt', (opt) => [
+        console.log(opt)
+    ]);
 });
 express_1.app.listen(port, () => {
     console.log(`Server running on port ${port}:\n-> http://localhost:${port}`);

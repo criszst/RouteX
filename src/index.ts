@@ -10,6 +10,7 @@ const port = 3000
 type extendsServerResponse<T> = ServerResponse extends T? ServerResponse : any
 type SvResponse = extendsServerResponse<ExtendedServerResponse>
 
+
 app.get('/', (req: SvResponse, res: SvResponse, next: any) => {
   console.log("next -> ", next.name);
   next();
@@ -20,11 +21,16 @@ app.get('/', (req: SvResponse, res: SvResponse) => {
   res.json({'hello': 'world'})
 });
 
+app.post('/post', (req: SvResponse, res: SvResponse) => {
+  res.writeHead(200)
+  res.write('Data post :)');
+  res.end();
+});
+
+
 
 app.get('/download', (req: SvResponse, res: SvResponse) => {
-
   res.download('./download.test.txt');
-  res.write('Downloading...')
 });
 
 
@@ -32,16 +38,12 @@ app.get('/reds', (req: SvResponse, res: SvResponse) => {
   res.redirect('/');
 })
 
+
 app.get('/send', (req: SvResponse, res: SvResponse) => {
-  res.sendFile('./download.test.txt')
+  res.sendFile('./download.test.txt', {}, (opt: any) => [
+    console.log(opt)
+  ])
 })
-
-
-app.post('/post', (req: SvResponse, res: SvResponse) => {
-  res.writeHead(200)
-  res.write('Data post :)');
-  res.end();
-});
 
 
 app.listen(port, () => {

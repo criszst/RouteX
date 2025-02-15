@@ -1,7 +1,11 @@
 import ExtendedServerResponse from "../interfaces/IServerResponse";
 
 import mime from 'mime';
-import fs from 'fs'
+import fs, { ReadStream } from 'fs'
+import Options from "../interfaces/IOptions";
+import { basename } from 'path';
+import { ReadableWebStreamOptions } from "fs/promises";
+
 
 export class Response {
 
@@ -57,14 +61,28 @@ export class Response {
     // btw later i change this
 
     public static sendFile(res: ExtendedServerResponse): void {
-        res.sendFile = function (path: string, options: Array<string>, fn?: Function): void {
-            const contentType = mime.getType(path) || 'application/octet-stream';
+        res.sendFile = function (path: string, options?: Options, callback?: Function): void {
 
-            const fileText = fs.readFileSync(path)
+            const contentType = mime.getType(path) || 'application/octet-stream';
+            const stats = fs.statSync(path)
+
+            let fileContent: Buffer | ReadStream;
+
+            if (stats.size < 1024 * 1024) fileContent = fs.readFileSync(path);
+
+            else fileContent = fs.createReadStream(path)
 
             this.setHeader('Content-Type', contentType)
-            this.write(fileText)
-            this.end()
+            this.setHeader('Content-Disposition', `${options?.attachment ? 'attachment' : 'inline'}; filename=${basename(path)}`);
+
+
+            if (callback) {
+                callback.call(this, JSON.stringify(fileContent));
+            } else {
+                this.write(fileContent);
+                this.end();
+            }
+
         };
     }
 }
