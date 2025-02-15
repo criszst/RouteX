@@ -32,6 +32,10 @@ app.get('/reds', (req: SvResponse, res: SvResponse) => {
   res.redirect('/');
 })
 
+app.get('/send', (req: SvResponse, res: SvResponse) => {
+  res.sendFile('./download.test.txt')
+})
+
 
 app.post('/post', (req: SvResponse, res: SvResponse) => {
   res.writeHead(200)

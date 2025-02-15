@@ -6,6 +6,8 @@ interface ExtendedServerResponse extends ServerResponse {
 
     download: (path: string) => void;
     redirect: (url: string) => void;
+
+    sendFile: (path: string, options: Array<string>, fn?: Function) => void;
 }
 
 export default ExtendedServerResponse;

@@ -48,6 +48,7 @@ export const prototype = {
         Response.json(res);
         Response.download(res);
         Response.redirect(res);
+        Response.sendFile(res)
 
         this.router.handle(req, res, next);
     },
