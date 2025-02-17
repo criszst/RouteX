@@ -6,8 +6,8 @@ import ExtendedServerResponse from "../interfaces/IServerResponse";
 
 const fs = require('fs');
 
-
 describe('Response', () => {
+
     it('should set JSON content type and send JSON string for object input in send method', (): void => {
         const res = {
             setHeader: jest.fn(),
@@ -21,6 +21,7 @@ describe('Response', () => {
         expect(res.setHeader).toHaveBeenCalledWith('Content-Type', 'application/json');
         expect(res.end).toHaveBeenCalledWith(JSON.stringify(body), 'utf-8');
     });
+
 
     it('should set plain text content type and send string for string input in send method', (): void => {
         const res = {
@@ -37,6 +38,7 @@ describe('Response', () => {
         expect(res.end).toHaveBeenCalledWith(body, 'utf-8');
     });
 
+
     it('should set JSON content type and send JSON string in json method', (): void => {
         const res = {
             setHeader: jest.fn(),
@@ -52,6 +54,7 @@ describe('Response', () => {
         expect(res.setHeader).toHaveBeenCalledWith('Content-Type', 'application/json');
         expect(res.send).toHaveBeenCalledWith(JSON.stringify(body));
     });
+
 
     it('should set appropriate headers and stream file in download method', (): void => {
         const res = {
@@ -76,6 +79,7 @@ describe('Response', () => {
         expect(fs.createReadStream).toHaveBeenCalledWith(path);
     });
 
+
     it('should redirect properly to a new url', (): void => {
         const res = {
             setHeader: jest.fn(),
@@ -91,4 +95,26 @@ describe('Response', () => {
         expect(res.setHeader).toHaveBeenCalledWith('Location', url);
         expect(res.end).toHaveBeenCalled();
     })
+
+
+    it('should send file to client', (): void => {
+        const res = {
+          setHeader: jest.fn(),
+          sendfile: jest.fn()
+        } as unknown as ExtendedServerResponse;
+
+        Response.sendFile(res);
+
+        res.sendFile('./download.test.txt', {
+          attachment: true,
+          root: undefined
+        }, (err: Error) => {
+          if (err) {
+            console.error(err.stack);
+          }
+        })
+
+        expect(res.setHeader).toHaveBeenCalledWith('Content-Disposition', 'attachment; filename=download.test.txt');
+        expect(fs.createReadStream).toHaveBeenCalledWith('/path/to/file.txt');
+      }) 
 });
