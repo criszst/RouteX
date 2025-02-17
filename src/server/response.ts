@@ -1,8 +1,7 @@
 import ExtendedServerResponse from "../interfaces/IServerResponse";
 import Options from "../interfaces/IOptions";
 
-import PathErrors from "../errors/path";
-import IPathErrors from "../errors/interfaces/IPathErrors";
+import ErrorsDetails from "../errors/details";
 
 import mime from 'mime';
 import fs, { ReadStream } from 'fs'
@@ -74,19 +73,16 @@ export class Response {
     res.sendFile = function (path: string, options?: Options, callback?: Function): void {
 
       if (!path)
-        throw new PathErrors('Path is required', {
+        throw ErrorsDetails.create('Path is required', {
           expected: 'non-empty string',
           received: path,
-          file: path,
-          line: 10,
-        } as IPathErrors);
+        });
 
-      if (!fs.existsSync(path))  throw new PathErrors('This path does not exist', {
+      if (!fs.existsSync(path))  
+        throw ErrorsDetails.create('This path does not exist', {
         expected: 'a valid path',
         received: path,
-        file: path,
-        line: 10,
-      } as IPathErrors);
+      });
 
 
       const contentType = mime.getType(path) || 'application/octet-stream';

@@ -6,5 +6,8 @@ class PathErrors extends Error {
         this.name = "PathError";
         this.details = details;
     }
+    static create(message, details) {
+        return new PathErrors(message, details);
+    }
 }
 exports.default = PathErrors;

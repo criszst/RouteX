@@ -4,10 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Response = void 0;
-const path_1 = __importDefault(require("../errors/path"));
+const details_1 = __importDefault(require("../errors/details"));
 const mime_1 = __importDefault(require("mime"));
 const fs_1 = __importDefault(require("fs"));
-const path_2 = require("path");
+const path_1 = require("path");
 class Response {
     constructor(initializer) { }
     initialize(res) {
@@ -61,18 +61,14 @@ class Response {
     static sendFile(res) {
         res.sendFile = function (path, options, callback) {
             if (!path)
-                throw new path_1.default('Path is required', {
+                throw details_1.default.create('Path is required', {
                     expected: 'non-empty string',
                     received: path,
-                    file: path,
-                    line: 10,
                 });
             if (!fs_1.default.existsSync(path))
-                throw new path_1.default('This path does not exist', {
+                throw details_1.default.create('This path does not exist', {
                     expected: 'a valid path',
                     received: path,
-                    file: path,
-                    line: 10,
                 });
             const contentType = mime_1.default.getType(path) || 'application/octet-stream';
             const stats = fs_1.default.statSync(path);
@@ -82,7 +78,7 @@ class Response {
             else
                 fileContent = fs_1.default.createReadStream(path);
             this.setHeader('Content-Type', contentType);
-            this.setHeader('Content-Disposition', `${(options === null || options === void 0 ? void 0 : options.attachment) ? 'attachment' : 'inline'}; filename=${(0, path_2.basename)(path)}`);
+            this.setHeader('Content-Disposition', `${(options === null || options === void 0 ? void 0 : options.attachment) ? 'attachment' : 'inline'}; filename=${(0, path_1.basename)(path)}`);
             if (callback) {
                 callback.call(this, JSON.stringify(fileContent));
             }

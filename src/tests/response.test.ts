@@ -105,13 +105,9 @@ describe('Response', () => {
 
         Response.sendFile(res);
 
-        res.sendFile('./download.test.txt', {
+        res.sendFile('/download.test.txt', {
           attachment: true,
           root: undefined
-        }, (err: Error) => {
-          if (err) {
-            console.error(err.stack);
-          }
         })
 
         expect(res.setHeader).toHaveBeenCalledWith('Content-Disposition', 'attachment; filename=download.test.txt');

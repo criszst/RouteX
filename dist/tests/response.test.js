@@ -75,13 +75,9 @@ const fs = require('fs');
             sendfile: jest.fn()
         };
         response_1.Response.sendFile(res);
-        res.sendFile('../download.test.txt', {
+        res.sendFile('/download.test.txt', {
             attachment: true,
             root: undefined
-        }, (err) => {
-            if (err) {
-                console.error(err.stack);
-            }
         });
         (0, globals_1.expect)(res.setHeader).toHaveBeenCalledWith('Content-Disposition', 'attachment; filename=download.test.txt');
         (0, globals_1.expect)(fs.createReadStream).toHaveBeenCalledWith('/path/to/file.txt');
