@@ -24,7 +24,7 @@ A lightweight Express-like framework that I built for fun. While I won’t be im
 
 ## 📌 Usage  
 
-Here are some quick examples of how to use it:  
+Some quick examples of how to use it:  
 
 ```ts
 response.send("Hello, client!"); // Sends a text response  
