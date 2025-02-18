@@ -11,7 +11,7 @@ export class Response {
 
   constructor(initializer?: ExtendedServerResponse) { }
 
-  initialize(res: ExtendedServerResponse): void {
+  initializer(res: ExtendedServerResponse): void {
     Response.send(res);
     Response.json(res);
     Response.download(res);
@@ -44,6 +44,12 @@ export class Response {
 
   public static download(res: ExtendedServerResponse): void {
     res.download = function (path: string) {
+      if (!path) throw ErrorsDetails.create('path is required', {
+          expected: 'non-empty string',
+          received: path,
+        })
+        
+      
       const contentType = mime.getType(path) || 'application/octet-stream';
 
       this.setHeader('Content-Type', contentType);
@@ -57,7 +63,10 @@ export class Response {
   public static redirect(res: ExtendedServerResponse): void {
     res.redirect = function (url: string): void {
       if (!url) {
-        return;
+        throw ErrorsDetails.create('URL is required', {
+          expected: 'non-empty string',
+          received: url,
+        })
       }
 
       this.statusCode = 302;
@@ -65,6 +74,7 @@ export class Response {
       this.end();
     };
   }
+  
 
   // yea i know this is not the same function on express, but i wanna make a something different
   // TODO: change the response of sendFile function

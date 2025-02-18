@@ -3,10 +3,10 @@ A simple express that I made for fun. It's really not completely, but i pretend 
 
 ### CHECKLIST:
 - [x] __Normal APP, with send, post and also res, req and next methods__
-- [x] Recreate the "merge-descriptors" lib, just for no dependency of the lib. Btw, this is more security
+- [x] Recreate some libs, just for no dependency of them. Btw, this is more security
 - [x] Some interfaces to clean up all the code
 - [ ] Add more middlewares
-- [ ] Add tests
+- [ ] Add more tests
 
 
 ### INSTALL
@@ -27,6 +27,7 @@ Then, install all packages of npm:
 ```
 npm install
 ```
+
 If do you want run all the tests... (this is not necessary for run the project, its just a good practice):
 
 ```

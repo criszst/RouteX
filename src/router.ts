@@ -4,7 +4,9 @@ import { Layer } from './layer';
 import GetOptions from './interfaces/IProtoype';
 const parseUrl = require('parseurl');
 
-// TODO: generate doc from each method
+// routing system for handling HTTP requests
+// handles incoming requests and matching them against registered routes
+
 export class Router {
   stack: Layer[];
   params: Record<string, unknown>;
@@ -19,16 +21,36 @@ export class Router {
   }
 
 
+  
+  /**
+   * Register a route for HTTP GET method
+   * @param path - URL path which the route is registered to
+   * @param handlers - functions that will be called when the route is matched
+   */
   public get(path: GetOptions["path"], ...handlers: GetOptions["handlers"]): void {
     const route = this.route(path);
     route.get(...handlers);
   }
 
+
+  /**
+   * Register a route for HTTP POST method
+   * @param path - URL path which the route is registered to
+   * @param handlers - functions that will be called when the route is matched
+   */
+  
   public post(path: GetOptions["path"], ...handlers: GetOptions["handlers"]): void {
     const route = this.route(path);
     route.post(...handlers);
 
   }
+
+  
+  /**
+   * Creates and registers a new route with the specified path.
+   * @param path - The URL path for which the route should be registered.
+   * @returns A new Route instance associated with the given path.
+   */
 
   private route(path: string): Route {
     const route = new Route(path);
@@ -39,6 +61,13 @@ export class Router {
     return route;
   }
 
+  
+  /**
+   * Handles an incoming request and calls the matched route's dispatch function
+   * @param req - The incoming request
+   * @param res - The response which will be sent back to the client
+   * @param out - A function which will be called if no route matches the request. If not provided, a 404 response is sent.
+   */
   public handle(req: IncomingMessage, res: ServerResponse, out?: Function): void {
     const self = this;
     const stack = self.stack;
@@ -78,6 +107,15 @@ export class Router {
     next();
   }
 
+
+/**
+ * Extracts the pathname from the incoming request object.
+ * @param req - The incoming request object.
+ * @returns The pathname extracted from the request URL, or undefined if an error occurs.
+ */
+
+// TODO: build a beautifuuull error message if an error occurs
+
  private getPathName(req: any): any {
     try {
       return parseUrl(req).pathname;
@@ -88,6 +126,14 @@ export class Router {
     }
   }
 
+  
+  /**
+   * Attempts to match the given path against the specified layer.
+   * If the match is successful, returns true. If an error occurs, returns the error.
+   * @param layer - The layer which the path should be matched against.
+   * @param path - The path to be matched.
+   * @returns True if the path matches, otherwise an error.
+   */
   private matchLayer(layer: Layer, path: any) {
     try {
       return layer.match(path);
@@ -98,6 +144,12 @@ export class Router {
 
 
 
+  /**
+   * Mounts the given function or functions at the root of the router.
+   * The given function or functions will be executed for every incoming request.
+   * @param fn - A single function or an array of functions to mount on the root.
+   * @returns The router instance, for chaining.
+   */
   public use(fn: Function | Function[]): Router {
     if (Array.isArray(fn)) {
       fn.forEach((handler) => {
