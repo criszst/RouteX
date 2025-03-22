@@ -35,8 +35,6 @@ class Response {
             return this.send(JSON.stringify(body));
         };
     }
-    // TODO: fs stream is kinda over engineering, so lets check if the path needs that
-    // if no, just read the entire file instead process the file in chunks
     static download(res) {
         res.download = function (path) {
             if (!path)
@@ -45,10 +43,19 @@ class Response {
                     received: path,
                 });
             const contentType = mime_1.default.getType(path) || 'application/octet-stream';
+            const stats = fs_1.default.statSync(path);
             this.setHeader('Content-Type', contentType);
             this.setHeader('Content-Disposition', `attachment; filename=${path.split('/').pop()}`);
-            const fileStream = fs_1.default.createReadStream(path);
-            fileStream.pipe(this);
+            // verifing if the file has a size more than 10mb. If no, just read entire content
+            // otherwise, process the file in chunks 
+            // i think this could be more efficient, but at the moment im just going to do it like this
+            let fileContent;
+            if (stats.size < 1024 * 1024)
+                fileContent = fs_1.default.readFileSync(path);
+            else
+                fileContent = fs_1.default.createReadStream(path);
+            this.write(fileContent);
+            this.end();
         };
     }
     static redirect(res) {
