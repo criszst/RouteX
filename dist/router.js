@@ -4,7 +4,8 @@ exports.Router = void 0;
 const route_1 = require("./route");
 const layer_1 = require("./layer");
 const parseUrl = require('parseurl');
-// TODO: generate doc from each method
+// routing system for handling HTTP requests
+// handles incoming requests and matching them against registered routes
 class Router {
     constructor(options = {}) {
         this.params = {};
@@ -12,14 +13,29 @@ class Router {
         this.caseSensitive = options.caseSensitive || false;
         this.strict = options.strict || false;
     }
+    /**
+     * Register a route for HTTP GET method
+     * @param path - URL path which the route is registered to
+     * @param handlers - functions that will be called when the route is matched
+     */
     get(path, ...handlers) {
         const route = this.route(path);
         route.get(...handlers);
     }
+    /**
+     * Register a route for HTTP POST method
+     * @param path - URL path which the route is registered to
+     * @param handlers - functions that will be called when the route is matched
+     */
     post(path, ...handlers) {
         const route = this.route(path);
         route.post(...handlers);
     }
+    /**
+     * Creates and registers a new route with the specified path.
+     * @param path - The URL path for which the route should be registered.
+     * @returns A new Route instance associated with the given path.
+     */
     route(path) {
         const route = new route_1.Route(path);
         const layer = new layer_1.Layer(path, {}, route.dispatch.bind(route));
@@ -27,6 +43,12 @@ class Router {
         this.stack.push(layer);
         return route;
     }
+    /**
+     * Handles an incoming request and calls the matched route's dispatch function
+     * @param req - The incoming request
+     * @param res - The response which will be sent back to the client
+     * @param out - A function which will be called if no route matches the request. If not provided, a 404 response is sent.
+     */
     handle(req, res, out) {
         const self = this;
         const stack = self.stack;
@@ -58,6 +80,12 @@ class Router {
         };
         next();
     }
+    /**
+     * Extracts the pathname from the incoming request object.
+     * @param req - The incoming request object.
+     * @returns The pathname extracted from the request URL, or undefined if an error occurs.
+     */
+    // TODO: build a beautifuuull error message if an error occurs
     getPathName(req) {
         try {
             return parseUrl(req).pathname;
@@ -66,6 +94,13 @@ class Router {
             return undefined;
         }
     }
+    /**
+     * Attempts to match the given path against the specified layer.
+     * If the match is successful, returns true. If an error occurs, returns the error.
+     * @param layer - The layer which the path should be matched against.
+     * @param path - The path to be matched.
+     * @returns True if the path matches, otherwise an error.
+     */
     matchLayer(layer, path) {
         try {
             return layer.match(path);
@@ -74,6 +109,12 @@ class Router {
             return err;
         }
     }
+    /**
+     * Mounts the given function or functions at the root of the router.
+     * The given function or functions will be executed for every incoming request.
+     * @param fn - A single function or an array of functions to mount on the root.
+     * @returns The router instance, for chaining.
+     */
     use(fn) {
         if (Array.isArray(fn)) {
             fn.forEach((handler) => {

@@ -5,7 +5,7 @@ class ErrorsDetails extends Error {
 
   constructor(message: string, details: IDetails) {
     super(message);
-    this.name = "Path Error";
+    this.name = ErrorsDetails.name;
     this.details = details;
   }
 
@@ -17,4 +17,4 @@ class ErrorsDetails extends Error {
   }
 }
 
-export default ErrorsDetails;
+export default ErrorsDetails

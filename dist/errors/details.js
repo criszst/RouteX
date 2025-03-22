@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class ErrorsDetails extends Error {
     constructor(message, details) {
         super(message);
-        this.name = "Path Error";
+        this.name = ErrorsDetails.name;
         this.details = details;
     }
     static create(message, details) {

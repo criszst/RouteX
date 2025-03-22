@@ -6,6 +6,7 @@ import ErrorsDetails from "../errors/details";
 import mime from 'mime';
 import fs, { ReadStream } from 'fs'
 import { basename } from 'path';
+import { isObject } from "util";
 
 export class Response {
 
@@ -39,8 +40,6 @@ export class Response {
   }
 
 
-  // TODO: fs stream is kinda over engineering, so lets check if the path needs that
-  // if no, just read the entire file instead process the file in chunks
 
   public static download(res: ExtendedServerResponse): void {
     res.download = function (path: string) {
@@ -51,12 +50,24 @@ export class Response {
         
       
       const contentType = mime.getType(path) || 'application/octet-stream';
+      const stats = fs.statSync(path)
 
       this.setHeader('Content-Type', contentType);
       this.setHeader('Content-Disposition', `attachment; filename=${path.split('/').pop()}`);
 
-      const fileStream = fs.createReadStream(path);
-      fileStream.pipe(this);
+      
+      // verifing if the file has a size more than 10mb. If no, just read entire content
+      // otherwise, process the file in chunks 
+      // i think this could be more efficient, but at the moment im just going to do it like this
+
+      let fileContent: Buffer | ReadStream;
+
+      if (stats.size < 1024 * 1024) fileContent = fs.readFileSync(path);
+
+      else fileContent = fs.createReadStream(path)
+
+      this.write(fileContent);
+      this.end();
     };
   }
 

@@ -21,7 +21,7 @@ express_1.app.get('/reds', (req, res) => {
     res.redirect('/');
 });
 express_1.app.get('/send', (req, res) => {
-    res.sendFile('./../download.test.txt', {});
+    res.sendFile('download.test.txt', {});
 });
 express_1.app.listen(port, () => {
     console.log(`Server running on port ${port}:\n-> http://localhost:${port}`);

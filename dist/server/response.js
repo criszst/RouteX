@@ -10,7 +10,7 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = require("path");
 class Response {
     constructor(initializer) { }
-    initialize(res) {
+    initializer(res) {
         Response.send(res);
         Response.json(res);
         Response.download(res);
@@ -39,6 +39,11 @@ class Response {
     // if no, just read the entire file instead process the file in chunks
     static download(res) {
         res.download = function (path) {
+            if (!path)
+                throw details_1.default.create('path is required', {
+                    expected: 'non-empty string',
+                    received: path,
+                });
             const contentType = mime_1.default.getType(path) || 'application/octet-stream';
             this.setHeader('Content-Type', contentType);
             this.setHeader('Content-Disposition', `attachment; filename=${path.split('/').pop()}`);
@@ -49,7 +54,10 @@ class Response {
     static redirect(res) {
         res.redirect = function (url) {
             if (!url) {
-                return;
+                throw details_1.default.create('URL is required', {
+                    expected: 'non-empty string',
+                    received: url,
+                });
             }
             this.statusCode = 302;
             this.setHeader('Location', url);

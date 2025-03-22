@@ -40,7 +40,7 @@ app.get('/reds', (req: SvResponse, res: SvResponse) => {
 
 
 app.get('/send', (req: SvResponse, res: SvResponse) => {
-  res.sendFile('./../download.test.txt', {})
+  res.sendFile('download.test.txt', {})
 })
 
 
