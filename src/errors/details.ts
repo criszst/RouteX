@@ -3,17 +3,20 @@ import IDetails from "../interfaces/IDetails";
 class ErrorsDetails extends Error {
   details: IDetails
 
-  constructor(message: string, details: IDetails) {
+  constructor(errorName: string, message: string, details: IDetails) {
     super(message);
-    this.name = ErrorsDetails.name;
+
+    // just WOP: Workaround-Oriented Programming :)
+    this.name = errorName;
+
     this.details = details;
   }
 
-  public static create(message: string, details: IDetails): ErrorsDetails {
+  public static create(errorName: string, message: string, details: IDetails): ErrorsDetails {
     const expectedError = `${message}\n
-------> ${details.expected} expected, but ${details.received} does not match\n`;
+------> ${details.expected} expected, but " ${details.received} " does not match\n`;
 
-    return new ErrorsDetails(expectedError, details);
+    return new ErrorsDetails(errorName, expectedError, details);
   }
 }
 

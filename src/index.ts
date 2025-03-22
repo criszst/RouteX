@@ -1,6 +1,6 @@
-import { ServerResponse } from "http";
+import { IncomingMessage, ServerResponse } from "http";
 import { app } from "./express"
-import ExtendedServerResponse from "./interfaces/IServerResponse";
+import { Response } from "./server/response";
 
 const port = 3000
 
@@ -8,11 +8,12 @@ const port = 3000
 
 // just improvising
 type extendsServerResponse<T> = ServerResponse extends T? ServerResponse : any
-type SvResponse = extendsServerResponse<ExtendedServerResponse>
+type SvResponse = extendsServerResponse<Response>
 
 
-app.get('/', (req: SvResponse, res: SvResponse, next: any) => {
+app.get('/', (req: IncomingMessage, res: SvResponse, next: any) => {
   console.log("next -> ", next.name);
+
   next();
 });
 
@@ -35,7 +36,7 @@ app.get('/download', (req: SvResponse, res: SvResponse) => {
 
 
 app.get('/reds', (req: SvResponse, res: SvResponse) => {
-  res.redirect('/');
+  res.redirect('');
 })
 
 

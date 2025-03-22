@@ -10,7 +10,9 @@ import { isObject } from "util";
 
 export class Response {
 
-  constructor(initializer?: ExtendedServerResponse) { }
+  constructor(initializer?: (res: ExtendedServerResponse) => void) {
+    this.initializer = initializer || this.initializer;
+  }
 
   initializer(res: ExtendedServerResponse): void {
     Response.send(res);
@@ -35,6 +37,14 @@ export class Response {
   public static json(res: ExtendedServerResponse): void {
     res.json = function (body: Object | String) {
       this.setHeader('Content-Type', 'application/json');
+
+      if (!body) return ErrorsDetails.create(
+        'Body Error', 
+        'body is required', {
+        received: body,
+        expected: 'non-empty object',
+      });
+
       return this.send(JSON.stringify(body));
     };
   }
@@ -43,7 +53,9 @@ export class Response {
 
   public static download(res: ExtendedServerResponse): void {
     res.download = function (path: string) {
-      if (!path) throw ErrorsDetails.create('path is required', {
+      if (!path) throw ErrorsDetails.create(
+        'Path Error', 
+        'path is required', {
           expected: 'non-empty string',
           received: path,
         })
@@ -74,7 +86,9 @@ export class Response {
   public static redirect(res: ExtendedServerResponse): void {
     res.redirect = function (url: string): void {
       if (!url) {
-        throw ErrorsDetails.create('URL is required', {
+        throw ErrorsDetails.create(
+          'URL Error', 
+          'URL is required', {
           expected: 'non-empty string',
           received: url,
         })
@@ -94,13 +108,17 @@ export class Response {
     res.sendFile = function (path: string, options?: Options, callback?: Function): void {
 
       if (!path)
-        throw ErrorsDetails.create('Path is required', {
+        throw ErrorsDetails.create(
+         'Path Error', 
+         'Path is required', {
           expected: 'non-empty string',
           received: path,
         });
 
       if (!fs.existsSync(path))  
-        throw ErrorsDetails.create('This path does not exist', {
+        throw ErrorsDetails.create(
+        'Path Error', 
+        'This path does not exist', {
         expected: 'a valid path',
         received: path,
       });

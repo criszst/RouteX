@@ -18,7 +18,7 @@ express_1.app.get('/download', (req, res) => {
     res.download('./download.test.txt');
 });
 express_1.app.get('/reds', (req, res) => {
-    res.redirect('/');
+    res.redirect('');
 });
 express_1.app.get('/send', (req, res) => {
     res.sendFile('download.test.txt', {});

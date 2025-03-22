@@ -1,4 +1,5 @@
-import { ServerResponse } from "http";
+import {IncomingMessage, ServerResponse} from "http";
+
 import Options from "./IOptions";
 
 interface ExtendedServerResponse extends ServerResponse {
@@ -9,6 +10,8 @@ interface ExtendedServerResponse extends ServerResponse {
     redirect: (url: string) => void;
 
     sendFile: (path: string, options: Options, fn?: Function) => void;
+
+    request: IncomingMessage;	
 }
 
 export default ExtendedServerResponse;
