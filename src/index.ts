@@ -1,14 +1,14 @@
-import { IncomingMessage, ServerResponse } from "http";
 import { app } from "./express"
-import { Response } from "./server/response";
+
+import { IncomingMessage, ServerResponse } from "http";
+import ExtendedServerResponse from "./interfaces/IServerResponse";
+
+
 
 const port = 3000
 
-// TODO: Change the type of response, cause it is not the same as the one in express
 
-// just improvising
-type extendsServerResponse<T> = ServerResponse extends T? ServerResponse : any
-type SvResponse = extendsServerResponse<Response>
+type SvResponse = ExtendedServerResponse;
 
 
 app.get('/', (req: IncomingMessage, res: SvResponse, next: any) => {
@@ -18,11 +18,11 @@ app.get('/', (req: IncomingMessage, res: SvResponse, next: any) => {
 });
 
 
-app.get('/', (req: SvResponse, res: SvResponse) => {
+app.get('/', (req: IncomingMessage, res: SvResponse) => {
   res.json({'hello': 'world'})
 });
 
-app.post('/post', (req: SvResponse, res: SvResponse) => {
+app.post('/post', (req: IncomingMessage, res: SvResponse) => {
   res.writeHead(200)
   res.write('Data post :)');
   res.end();
@@ -30,24 +30,24 @@ app.post('/post', (req: SvResponse, res: SvResponse) => {
 
 
 
-app.get('/download', (req: SvResponse, res: SvResponse) => {
+app.get('/download', (req: IncomingMessage, res: SvResponse) => {
   res.download('./download.test.txt');
 });
 
 
-app.get('/reds', (req: SvResponse, res: SvResponse) => {
-  res.redirect('');
+app.get('/reds', (req: IncomingMessage, res: SvResponse) => {
+  res.redirect('https://google.com');
 })
 
 
-app.get('/send', (req: SvResponse, res: SvResponse) => {
+app.get('/send', (req: IncomingMessage, res: SvResponse) => {
   res.sendFile('download.test.txt', {
     attachment: true,
-    maxAge: 60, // cache por 1 minuto
+    maxAge: 60, // 1min cache
     headers: {
-      'X-Custom-Header': 'some value, idk what put here',
+      'X-Custom-Header': 'idk what put here',
     },
-  }, (err: Error) => {
+  }, (err: any) => {
     if (err) {
       console.log(err);
     }
