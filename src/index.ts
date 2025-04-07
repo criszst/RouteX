@@ -41,7 +41,17 @@ app.get('/reds', (req: SvResponse, res: SvResponse) => {
 
 
 app.get('/send', (req: SvResponse, res: SvResponse) => {
-  res.sendFile('download.test.txt', {})
+  res.sendFile('download.test.txt', {
+    attachment: true,
+    maxAge: 60, // cache por 1 minuto
+    headers: {
+      'X-Custom-Header': 'some value, idk what put here',
+    },
+  }, (err: Error) => {
+    if (err) {
+      console.log(err);
+    }
+  });
 })
 
 

@@ -9,7 +9,7 @@ interface ExtendedServerResponse extends ServerResponse {
     download: (path: string) => void;
     redirect: (url: string) => void;
 
-    sendFile: (path: string, options: Options, fn?: Function) => void;
+    sendFile: (path: string, options: Options, callback?: (err?: Error | null) => void) => void;
 
     request: IncomingMessage;	
 }

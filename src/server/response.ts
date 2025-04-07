@@ -4,9 +4,10 @@ import Options from "../interfaces/IOptions";
 import ErrorsDetails from "../errors/details";
 
 import mime from 'mime';
-import fs, { ReadStream } from 'fs'
-import { basename } from 'path';
-import { isObject } from "util";
+import fs, { ReadStream, promises as fsPromises, createReadStream, statSync, existsSync } from 'fs'
+
+import { basename, join } from 'path';
+import { rejects } from "assert";
 
 export class Response {
 
@@ -39,7 +40,7 @@ export class Response {
       this.setHeader('Content-Type', 'application/json');
 
       if (!body) return ErrorsDetails.create(
-        'Body Error', 
+        'Body Error',
         'body is required', {
         received: body,
         expected: 'non-empty object',
@@ -54,20 +55,20 @@ export class Response {
   public static download(res: ExtendedServerResponse): void {
     res.download = function (path: string) {
       if (!path) throw ErrorsDetails.create(
-        'Path Error', 
+        'Path Error',
         'path is required', {
-          expected: 'non-empty string',
-          received: path,
-        })
-        
-      
+        expected: 'non-empty string',
+        received: path,
+      })
+
+
       const contentType = mime.getType(path) || 'application/octet-stream';
       const stats = fs.statSync(path)
 
       this.setHeader('Content-Type', contentType);
       this.setHeader('Content-Disposition', `attachment; filename=${path.split('/').pop()}`);
 
-      
+
       // verifing if the file has a size more than 10mb. If no, just read entire content
       // otherwise, process the file in chunks 
       // i think this could be more efficient, but at the moment im just going to do it like this
@@ -78,6 +79,7 @@ export class Response {
 
       else fileContent = fs.createReadStream(path)
 
+
       this.write(fileContent);
       this.end();
     };
@@ -87,7 +89,7 @@ export class Response {
     res.redirect = function (url: string): void {
       if (!url) {
         throw ErrorsDetails.create(
-          'URL Error', 
+          'URL Error',
           'URL is required', {
           expected: 'non-empty string',
           received: url,
@@ -99,51 +101,89 @@ export class Response {
       this.end();
     };
   }
-  
-
-  // yea i know this is not the same function on express, but i wanna make a something different
-  // TODO: change the response of sendFile function
-
-  public static sendFile(res: ExtendedServerResponse): void {
-    res.sendFile = function (path: string, options?: Options, callback?: Function): void {
-
-      if (!path)
-        throw ErrorsDetails.create(
-         'Path Error', 
-         'Path is required', {
-          expected: 'non-empty string',
-          received: path,
-        });
-
-      if (!fs.existsSync(path))  
-        throw ErrorsDetails.create(
-        'Path Error', 
-        'This path does not exist', {
-        expected: 'a valid path',
-        received: path,
-      });
 
 
-      const contentType = mime.getType(path) || 'application/octet-stream';
-      const stats = fs.statSync(path)
 
-      let fileContent: Buffer | ReadStream;
+  public static sendFile(res: ExtendedServerResponse): Promise<void> | void {
+    res.sendFile = function (path: string, options?: Options, callback?: (err?: Error | null) => void): Promise<void> {
+      
+      // wth i making this
+      return new Promise(async (resolve, reject) => {
+        try {
+          const filePath = options?.root ? join(options.root, path) : path
 
-      if (stats.size < 1024 * 1024) fileContent = fs.readFileSync(path);
+          if (!path)
+            throw ErrorsDetails.create(
+              'Path Error',
+              'Path is required', {
+              expected: 'non-empty string',
+              received: path,
+            });
 
-      else fileContent = fs.createReadStream(path)
+          if (!fs.existsSync(path))
+            throw ErrorsDetails.create(
+              'Path Error',
+              'This path does not exist', {
+              expected: 'a valid path',
+              received: filePath,
+            });
 
-      this.setHeader('Content-Type', contentType)
-      this.setHeader('Content-Disposition', `${options?.attachment ? 'attachment' : 'inline'}; filename=${basename(path)}`);
+          if (callback && typeof callback !== 'function') {
+            throw ErrorsDetails.create(
+              'Callback Error',
+              'Callback must be a function', {
+              expected: 'non-empty object',
+              received: typeof callback,
+            })
+          }
 
 
-      if (callback) {
-        callback.call(this, JSON.stringify(fileContent));
-      } else {
-        this.write(fileContent);
-        this.end();
-      }
+          const contentType: string = mime.getType(filePath) || 'application/octet-stream';
+          const stats: fs.Stats = fs.statSync(filePath)
 
+
+          this.setHeader('Content-Type', contentType)
+          this.setHeader('Content-Disposition', `${options?.attachment ? 'attachment' : 'inline'}; filename=${basename(filePath)}`);
+
+          if (options?.maxAge !== undefined) {
+            this.setHeader('Cache-Control', `public, max-age=${options.maxAge}`)
+          }
+
+          if (options?.headers) {
+            for (const [key, value] of Object.entries(options.headers)) {
+              this.setHeader(key, value)
+            }
+          }
+
+          if (stats.size < 1024 * 1024) {
+            const data: Buffer = await fsPromises.readFile(filePath);
+
+            this.write(data);
+            this.end();
+
+            callback?.(null)
+            return resolve()
+          }
+
+          
+          const stream: ReadStream = fs.createReadStream(filePath);
+
+          stream.pipe(this);
+
+          stream.on('end', () => {
+            callback?.(null);
+            resolve();
+          });
+
+
+          stream.on('error', (err) =>
+            callback?.call(this, err));
+
+        } catch (err: any) {
+          callback?.call(this, err)
+          rejects(err)
+        }
+      })
     };
   }
 }
