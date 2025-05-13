@@ -43,7 +43,7 @@ export class Response {
         'Body Error',
         'body is required', {
         received: body,
-        expected: 'non-empty object',
+        expected: typeof body,
       });
 
       return this.send(JSON.stringify(body));
@@ -58,7 +58,7 @@ export class Response {
         'Path Error',
         'path is required', {
         expected: 'non-empty string',
-        received: path,
+        received: `${typeof path} / ${path} cannot be null or empty,`
       })
 
 
