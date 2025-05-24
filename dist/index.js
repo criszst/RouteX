@@ -15,13 +15,22 @@ express_1.app.post('/post', (req, res) => {
     res.end();
 });
 express_1.app.get('/download', (req, res) => {
-    res.download('./download.test.txt');
+    res.download('./send.html');
 });
 express_1.app.get('/reds', (req, res) => {
-    res.redirect('');
+    res.redirect('https://google.com');
 });
 express_1.app.get('/send', (req, res) => {
-    res.sendFile('download.test.txt', {});
+    res.sendFile('send.html', {
+        attachment: false,
+        headers: {
+            'X-Custom-Header': 'idk what put here',
+        },
+    }, (err) => {
+        if (err) {
+            console.log(err);
+        }
+    });
 });
 express_1.app.listen(port, () => {
     console.log(`Server running on port ${port}:\n-> http://localhost:${port}`);

@@ -1,13 +1,12 @@
-import ExtendedServerResponse from "../interfaces/IServerResponse";
-import Options from "../interfaces/IOptions";
-
-import ErrorsDetails from "../errors/details";
-
+import fs, { ReadStream, promises as fsPromises} from 'fs'
 import mime from 'mime';
-import fs, { ReadStream, promises as fsPromises, createReadStream, statSync, existsSync } from 'fs'
 
 import { basename, join } from 'path';
-import { rejects } from "assert";
+
+import ErrorsDetails from "../errors/details";
+import Options from "../interfaces/IOptions";
+
+import ExtendedServerResponse from "../interfaces/IServerResponse";
 
 export class Response {
 
@@ -26,6 +25,7 @@ export class Response {
   public static send(res: ExtendedServerResponse): void {
     res.send = function (body: object | string) {
       if (typeof body === 'object') {
+        this.setHeader('Access-Control-Allow-Method', 'POST');
         this.setHeader('Content-Type', 'application/json');
         this.end(JSON.stringify(body), 'utf-8');
       } else {
@@ -37,6 +37,10 @@ export class Response {
 
   public static json(res: ExtendedServerResponse): void {
     res.json = function (body: Object | String) {
+      this.setHeader('Access-Control-Allow-Method', 'POST, GET');
+      this.setHeader('Access-Control-Allow-Origin', '*');
+      
+
       this.setHeader('Content-Type', 'application/json');
 
       if (!body) return ErrorsDetails.create(
@@ -64,6 +68,9 @@ export class Response {
 
       const contentType = mime.getType(path) || 'application/octet-stream';
       const stats = fs.statSync(path)
+
+      this.setHeader('Access-Control-Allow-Method', 'POST');
+      this.setHeader('Access-Control-Allow-Origin', '*');
 
       this.setHeader('Content-Type', contentType);
       this.setHeader('Content-Disposition', `attachment; filename=${path.split('/').pop()}`);
@@ -104,6 +111,8 @@ export class Response {
       }
 
       this.statusCode = 302;
+      this.setHeader('Access-Control-Allow-Method', 'POST, GET');
+      this.setHeader('Access-Control-Allow-Origin', '*');
       this.setHeader('Location', url);
       this.end();
     };
@@ -111,11 +120,29 @@ export class Response {
 
 
 
+  /**
+   * Adds a sendFile method to the response object that sends a file to the client.
+   * The method takes a path to the file and an options object that can be used to
+   * specify additional settings for sending the file.
+   *
+   * @param res - The response object to which the sendFile method is added.
+   *
+   * @returns A promise that resolves when the file is sent or an error occurs.
+   *
+   * @example
+   * res.sendFile('path/to/file.txt', {
+   *   root: '/path/to/root',
+   *   attachment: true,
+   *   headers: {
+   *     'X-Custom-Header': 'value',
+   *   },
+   *   maxAge: 1000
+   * });
+   */
   public static sendFile(res: ExtendedServerResponse): Promise<void> | void {
     res.sendFile = function (path: string, options?: Options, callback?: (err?: Error | null) => void): Promise<void> {
       
-      // wth i making this
-      return new Promise(async (resolve, reject) => {
+      return new Promise(async (resolve, rejects) => {
         try {
           const filePath = options?.root ? join(options.root, path) : path
 
@@ -149,6 +176,7 @@ export class Response {
           const stats: fs.Stats = fs.statSync(filePath)
 
 
+          this.setHeader('Access-Control-Allow-Method', 'POST');
           this.setHeader('Content-Type', contentType)
           this.setHeader('Content-Disposition', `${options?.attachment ? 'attachment' : 'inline'}; filename=${basename(filePath)}`);
 

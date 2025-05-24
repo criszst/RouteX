@@ -71,11 +71,11 @@ class Router {
                 route.stack[0].handle_request(req, res, next);
             }
             if (!match && out) {
-                out(); // Call the outer layer's next function
+                out();
             }
             else if (!match) {
                 res.statusCode = 404;
-                res.end('Not Found');
+                res.end('This route does not exist');
             }
         };
         next();

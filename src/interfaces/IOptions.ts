@@ -1,7 +1,7 @@
 interface Options {
     attachment?: boolean;
     maxAge?: number;
-    root?: undefined;
+    root?: string;
     headers?: {
         [key: string]: string;
     }

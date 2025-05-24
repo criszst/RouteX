@@ -97,10 +97,10 @@ export class Router {
       }
   
       if (!match && out) {
-        out(); // Call the outer layer's next function
+        out();
       } else if (!match) {
         res.statusCode = 404;
-        res.end('Not Found');
+        res.end('This route does not exist');
       }
     };
   

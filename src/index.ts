@@ -3,8 +3,6 @@ import { app } from "./express"
 import { IncomingMessage, ServerResponse } from "http";
 import ExtendedServerResponse from "./interfaces/IServerResponse";
 
-
-
 const port = 3000
 
 
@@ -31,7 +29,7 @@ app.post('/post', (req: IncomingMessage, res: SvResponse) => {
 
 
 app.get('/download', (req: IncomingMessage, res: SvResponse) => {
-  res.download('./download.test.txt');
+  res.download('./send.html');
 });
 
 
@@ -41,9 +39,8 @@ app.get('/reds', (req: IncomingMessage, res: SvResponse) => {
 
 
 app.get('/send', (req: IncomingMessage, res: SvResponse) => {
-  res.sendFile('download.test.txt', {
-    attachment: true,
-    maxAge: 60, // 1min cache
+  res.sendFile('send.html', {
+    attachment: false,
     headers: {
       'X-Custom-Header': 'idk what put here',
     },
