@@ -34,8 +34,6 @@ response.redirect("https://example.com"); // Redirects the user
 response.sendFile("./index.html"); // Sends the content of a file  
 ```
 
-**Note:** The `sendFile` method is still under development and currently only supports `.txt` files
-
 <br/>
 
 ## Installation  
@@ -85,4 +83,4 @@ The server runs on port `3000`. Once it's up, visit:
 [http://localhost:3000](http://localhost:3000)  
 
 You should see the message:  
-`Hello, world!`  
+`{"hello":"world"}`  
