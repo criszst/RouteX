@@ -2,6 +2,7 @@ import { IncomingMessage, ServerResponse } from 'http';
 import { Route } from './route';
 import { Layer } from './layer';
 import GetOptions from './interfaces/IProtoype';
+import ErrorsDetails from './errors/details';
 const parseUrl = require('parseurl');
 
 // routing system for handling HTTP requests
@@ -116,13 +117,28 @@ export class Router {
 
 // TODO: build a beautifuuull error message if an error occurs
 
- private getPathName(req: any): any {
+  private getPathName(req: any): any {
     try {
       return parseUrl(req).pathname;
     }
 
     catch (err) {
-      return undefined;
+      if (err) {
+        if (err instanceof Error) {
+          return err.message;
+        } else {
+          return 'An unknown error occurred: \n' + err;
+        }
+      } else {
+
+        return ErrorsDetails.create(
+          'Path Error',
+          'Path is required', {
+          expected: 'non-empty string',
+          received: req,
+        })
+
+      }
     }
   }
 

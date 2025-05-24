@@ -1,8 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Router = void 0;
 const route_1 = require("./route");
 const layer_1 = require("./layer");
+const details_1 = __importDefault(require("./errors/details"));
 const parseUrl = require('parseurl');
 // routing system for handling HTTP requests
 // handles incoming requests and matching them against registered routes
@@ -91,7 +95,20 @@ class Router {
             return parseUrl(req).pathname;
         }
         catch (err) {
-            return undefined;
+            if (err) {
+                if (err instanceof Error) {
+                    return err.message;
+                }
+                else {
+                    return 'An unknown error occurred: \n' + err;
+                }
+            }
+            else {
+                return details_1.default.create('Path Error', 'Path is required', {
+                    expected: 'non-empty string',
+                    received: req,
+                });
+            }
         }
     }
     /**

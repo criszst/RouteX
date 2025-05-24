@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const globals_1 = require("@jest/globals");
 const mime_1 = __importDefault(require("mime"));
+const path_1 = __importDefault(require("path"));
 const response_1 = require("../server/response");
 const fs = require('fs');
 (0, globals_1.describe)('Response', () => {
@@ -75,11 +76,11 @@ const fs = require('fs');
             sendfile: jest.fn()
         };
         response_1.Response.sendFile(res);
-        res.sendFile('/download.test.txt', {
+        res.sendFile(path_1.default.resolve(__dirname, '../../send.html'), {
             attachment: true,
             root: undefined
         });
-        (0, globals_1.expect)(res.setHeader).toHaveBeenCalledWith('Content-Disposition', 'attachment; filename=download.test.txt');
-        (0, globals_1.expect)(fs.createReadStream).toHaveBeenCalledWith('/path/to/file.txt');
+        (0, globals_1.expect)(res.setHeader).toHaveBeenCalledWith('Access-Control-Allow-Method', 'POST', 'Content-Type', 'text/plain', 'Content-Disposition', 'attachment; filename=send.html');
+        (0, globals_1.expect)(fs.createReadStream).toHaveBeenCalledWith('../../send.html');
     });
 });

@@ -1,6 +1,8 @@
 import {describe, expect, it} from '@jest/globals';
 import mime from 'mime';
 
+import path from 'path';
+
 import { Response } from "../server/response";
 import ExtendedServerResponse from "../interfaces/IServerResponse";
 
@@ -105,12 +107,12 @@ describe('Response', () => {
 
         Response.sendFile(res);
 
-        res.sendFile('/download.test.txt', {
+       res.sendFile(path.resolve(__dirname, '../../send.html'), {
           attachment: true,
           root: undefined
         })
 
-        expect(res.setHeader).toHaveBeenCalledWith('Content-Disposition', 'attachment; filename=download.test.txt');
-        expect(fs.createReadStream).toHaveBeenCalledWith('/path/to/file.txt');
-      }) 
+        expect(res.setHeader).toHaveBeenCalledWith('Access-Control-Allow-Method', 'POST', 'Content-Type', 'text/plain', 'Content-Disposition', 'attachment; filename=send.html', );
+        expect(fs.createReadStream).toHaveBeenCalledWith('../../send.html');
+    })
 });

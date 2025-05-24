@@ -82,7 +82,7 @@ class Response {
             if (!body)
                 return details_1.default.create('Body Error', 'body is required', {
                     received: body,
-                    expected: 'non-empty object',
+                    expected: typeof body,
                 });
             return this.send(JSON.stringify(body));
         };
@@ -92,7 +92,7 @@ class Response {
             if (!path)
                 throw details_1.default.create('Path Error', 'path is required', {
                     expected: 'non-empty string',
-                    received: path,
+                    received: `${typeof path} / ${path} cannot be null or empty,`
                 });
             const contentType = mime_1.default.getType(path) || 'application/octet-stream';
             const stats = fs_1.default.statSync(path);
