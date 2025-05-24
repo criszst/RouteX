@@ -8,7 +8,7 @@ A lightweight Express-like framework that I built for fun. While I won’t be im
 - [x] Basic app with `send`, `post`, `res`, `req`, and `next` methods.  
 - [x] Recreated some libraries to reduce dependencies (better for security).  
 - [x] Interfaces to keep the code clean and maintainable.  
-- [ ] Function to send an HTML file to the client.  
+- [x] Function to send an HTML file to the client.  
 - [ ] More built-in middlewares.  
 - [ ] Additional tests.  
 
@@ -20,7 +20,7 @@ A lightweight Express-like framework that I built for fun. While I won’t be im
 - **`json(data)`** → Returns a JSON response.  
 - **`download(filePath)`** → Sends a file to be downloaded by the client.  
 - **`redirect(url)`** → Redirects the client to a specific URL (public domain or local project file).  
-- **`sendFile(filePath)`** *(in development...)* → Sends the content of a file to the client (currently supports only `.txt` files).  
+- **`sendFile(filePath)`** → Sends the content of a file to the client.  
 
 ## Usage  
 
