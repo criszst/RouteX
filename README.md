@@ -5,13 +5,17 @@ A lightweight Express-like framework that I built for fun. While I won’t be im
 
 ## Checklist  
 
-- [x] Basic app with `send`, `post`, `res`, `req`, and `next` methods.  
-- [x] Recreated some libraries to reduce dependencies (better for security).  
-- [x] Interfaces to keep the code clean and maintainable.  
-- [x] Function to send an HTML file to the client.
-- [ ] Ip Middleware (with Rate Limit and Blocked IPs)
-- [ ] More built-in middlewares.  
-- [ ] Additional tests.  
+- [x] **Basic app structure** → Includes core methods like `send`, `post`, `res`, `req`, and `next`.  
+- [x] **Reduced dependencies** → Recreated essential libraries to improve security and minimize external code.  
+- [x] **TypeScript interfaces** → Used to ensure clean and maintainable code.  
+- [x] **HTML file sending** → Function to send an HTML file directly to the client. 
+- [ ] **IP Middleware** → Middleware with IP blocking and rate limiting features.  
+- [ ] **Rate Limiting Middleware** → Limit the number of requests per IP to prevent abuse.  
+- [ ] **IP Blocking Middleware** → Block access from specific IP addresses.  
+- [ ] **More built-in middlewares** → Add useful built-in middleware options for developers.  
+- [ ] **404 Handler** → Provide a default or customizable response for unmatched routes.  
+- [ ] **Simple Logger Middleware** → Log HTTP method, path, and timestamp for each request.  
+- [ ] **Additional tests** → Improve test coverage for stability and reliability.
 
 <br/>
 
