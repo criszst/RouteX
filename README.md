@@ -39,6 +39,8 @@ response.redirect("https://example.com"); // Redirects the user
 response.sendFile("./index.html"); // Sends the content of a file  
 ```
 
+See more exaple of usage at <a href="src/index.ts">index.ts</a>
+
 <br/>
 
 ## Installation  
