@@ -1,4 +1,4 @@
-# 🚀 MyExpress  
+# 🚀 RouteX
 
 A lightweight Express-like framework that I built for fun. While I won’t be implementing all the features of Express, I’ll be adding the essential ones to keep the project clean and functional.  
 <br/>
@@ -41,7 +41,7 @@ response.sendFile("./index.html"); // Sends the content of a file
 First, clone the repository:  
 
 ```sh
-git clone https://github.com/criszst/MyExpress.git
+git clone https://github.com/criszst/RouteX.git
 ```
 
 Navigate into the project directory:  
