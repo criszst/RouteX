@@ -3,6 +3,7 @@ import IDetails from "../interfaces/IDetails";
 class ErrorsDetails extends Error {
   details: IDetails
 
+  // TODO: add self checking for details
   constructor(errorName: string, message: string, details: IDetails) {
     super(message);
 

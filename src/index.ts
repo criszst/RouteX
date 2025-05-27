@@ -2,6 +2,7 @@ import { app } from "./express"
 
 import { IncomingMessage, ServerResponse } from "http";
 import ExtendedServerResponse from "./interfaces/IServerResponse";
+import { IPMiddleware } from "./middleware/ip";
 
 const port = 3000
 
@@ -38,11 +39,11 @@ app.get('/reds', (req: IncomingMessage, res: SvResponse) => {
 })
 
 
-app.get('/send', (req: IncomingMessage, res: SvResponse) => {
+app.get('/send', IPMiddleware, (req: IncomingMessage, res: SvResponse) => {
   res.sendFile('send.html', {
     attachment: false,
     headers: {
-      'X-Custom-Header': 'idk what put here',
+      'X-Custom-Header': 'idk what put here',      
     },
   }, (err: any) => {
     if (err) {

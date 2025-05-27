@@ -1,4 +1,4 @@
-import fs, { ReadStream, promises as fsPromises} from 'fs'
+import fs, { ReadStream, promises as fsPromises } from 'fs'
 import mime from 'mime';
 
 import { basename, join } from 'path';
@@ -7,6 +7,8 @@ import ErrorsDetails from "../errors/details";
 import Options from "../interfaces/IOptions";
 
 import ExtendedServerResponse from "../interfaces/IServerResponse";
+import { IPMiddleware } from '../middleware/ip';
+import { IncomingMessage, ServerResponse } from 'http';
 
 export class Response {
 
@@ -39,7 +41,7 @@ export class Response {
     res.json = function (body: Object | String) {
       this.setHeader('Access-Control-Allow-Method', 'POST, GET');
       this.setHeader('Access-Control-Allow-Origin', '*');
-      
+
 
       this.setHeader('Content-Type', 'application/json');
 
@@ -98,7 +100,7 @@ export class Response {
    * @param res - The response object to which the redirect method is added.
    * 
   */
- 
+
   public static redirect(res: ExtendedServerResponse): void {
     res.redirect = function (url: string): void {
       if (!url) {
@@ -141,7 +143,9 @@ export class Response {
    */
   public static sendFile(res: ExtendedServerResponse): Promise<void> | void {
     res.sendFile = function (path: string, options?: Options, callback?: (err?: Error | null) => void): Promise<void> {
-      
+
+
+
       return new Promise(async (resolve, rejects) => {
         try {
           const filePath = options?.root ? join(options.root, path) : path
@@ -169,6 +173,15 @@ export class Response {
               expected: 'non-empty object',
               received: typeof callback,
             })
+          }
+
+          if (!this || !(this instanceof ServerResponse)) {
+            throw ErrorsDetails.create(
+              'Response Error',
+              'sendFile must be called on an instance of ServerResponse or ExtendedServerResponse', {
+              expected: 'ServerResponse or ExtendedServerResponse instance',
+              received: this,
+            });
           }
 
 
@@ -200,7 +213,7 @@ export class Response {
             return resolve()
           }
 
-          
+
           const stream: ReadStream = fs.createReadStream(filePath);
 
           stream.pipe(this);
