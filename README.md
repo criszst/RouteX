@@ -56,7 +56,7 @@ git clone https://github.com/criszst/RouteX.git
 Navigate into the project directory:  
 
 ```sh
-cd MyExpress
+cd RouteX
 ```
 
 Then, install dependencies:  
