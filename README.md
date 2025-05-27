@@ -8,7 +8,8 @@ A lightweight Express-like framework that I built for fun. While I won’t be im
 - [x] Basic app with `send`, `post`, `res`, `req`, and `next` methods.  
 - [x] Recreated some libraries to reduce dependencies (better for security).  
 - [x] Interfaces to keep the code clean and maintainable.  
-- [x] Function to send an HTML file to the client.  
+- [x] Function to send an HTML file to the client.
+- [ ] Ip Middleware (with Rate Limit and Blocked IPs)
 - [ ] More built-in middlewares.  
 - [ ] Additional tests.  
 
