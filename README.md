@@ -27,6 +27,8 @@ A lightweight Express-like framework that I built for fun. While I won’t be im
 - **`redirect(url)`** → Redirects the client to a specific URL (public domain or local project file).  
 - **`sendFile(filePath)`** → Sends the content of a file to the client.  
 
+</br>
+
 ## Usage  
 
 Some quick examples of how to use it:  
@@ -39,9 +41,9 @@ response.redirect("https://example.com"); // Redirects the user
 response.sendFile("./index.html"); // Sends the content of a file  
 ```
 
-See more exaple of usage at <a href="src/index.ts">index.ts</a>
+See more example of usage at <a href="src/index.ts">index.ts</a>
 
-<br/>
+</br>
 
 ## Installation  
 
