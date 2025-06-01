@@ -63,7 +63,7 @@ interface App {
      * @param path - The URL path to register the route on.
      * @param handlers - Functions to handle the route when matched.
      */
-    get(path: GetOptions["path"], options: { alias?: string}, ...handlers: GetOptions["handlers"]): void
+    get(path: GetOptions["path"], options: { aliases?: string}, ...handlers: GetOptions["handlers"]): void
 
     /**
      * Registers a route for the HTTP POST method.

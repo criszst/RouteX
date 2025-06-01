@@ -28,26 +28,20 @@ export class Router {
    * @param path - URL path which the route is registered to
    * @param handlers - functions that will be called when the route is matched
    */
-  public get(path: GetOptions["path"], options: { aliases?: string[]}, ...handlers: GetOptions["handlers"]): void {
+  public get(
+  path: GetOptions["path"],
+  options: { aliases?: string | string[] },
+  ...handlers: GetOptions["handlers"]
+): void {
+  const aliases = options.aliases
+    ? Array.isArray(options.aliases)
+      ? options.aliases
+      : [options.aliases]
+    : [];
 
-    if (typeof options.aliases === 'object') {
-      const mainHandler = handlers[0];
-      const alias = options.aliases;
-
-      if (alias) {
-        const aliases = Array.isArray(alias) ? alias : [alias];
-        aliases.forEach(a => this.registerRoute('get', a, mainHandler));
-      }
-
-      this.registerRoute('get', path, mainHandler);
-    } 
-    
-
-    // TODO: provide register route method
-      const route = this.route(path);
-      route.get(...handlers);
-    
-  }
+  // Sempre registra a rota principal
+  this.registerRoute('get', path, { aliases: [path, ...aliases] }, ...handlers);
+}
 
 
 
@@ -70,9 +64,11 @@ export class Router {
    * @returns A new Route instance associated with the given path.
    */
 
-  private route(path: string): Route {
+  private route(path: string, aliases?: string): Route {
     const route = new Route(path);
     const layer = new Layer(path, {}, route.dispatch.bind(route));
+
+    layer.alias = Array.isArray(aliases) ? aliases : [aliases ?? path];
 
     layer.route = route;
     this.stack.push(layer);
@@ -90,19 +86,18 @@ export class Router {
    * @param out - A function which will be called if no route matches the request. If not provided, a 404 response is sent.
    */
   public handle(req: IncomingMessage, res: ServerResponse, out?: Function): void {
-    const self = this;
-    const stack = self.stack;
-    let idx = 0;
+    const stack = this.stack;
+    let index = 0;
   
     const next = () => {
       let layer;
       let match;
       let route;
   
-      while (match !== true && idx < stack.length) {
+      while (match !== true && index < stack.length) {
         const path = this.getPathName(req);
   
-        layer = stack[idx++];
+        layer = stack[index++];
         match = this.matchLayer(layer, path);
         route = layer.route;
   
@@ -170,13 +165,9 @@ export class Router {
    * @param path - The path to be matched.
    * @returns True if the path matches, otherwise an error.
    */
-  private matchLayer(layer: Layer, path: any) {
-    try {
-      return layer.match(path);
-    } catch (err) {
-      return err;
-    }
-  }
+  private matchLayer(layer: Layer, path: any): boolean {
+    return layer.match(path);
+}
 
 
 
@@ -202,12 +193,41 @@ export class Router {
     return this;
   }
 
-  private registerRoute(method: 'get' | 'post', path: string, handler: Function) {
-  const route = this.route(path);
-  route[method](handler);
-}
+  private registerRoute( method: 'get' | 'post', path: string,  options: { aliases: string | string[] }, ...handlers: GetOptions["handlers"]): void {
+    
+    const aliases = options.aliases ? Array.isArray(options.aliases) ? options.aliases : [options.aliases] : [];
 
+    const route = this.route(path);
 
+    if (method === 'get') {
+      aliases.forEach(alias => {
+        route.get(alias, ...handlers);
+      });
+    } 
+    
+    else if (method === 'post') route.post(...handlers); 
+    
+    else  throw new Error(`Unsupported method: ${method}`);
+    
+
+    let normalizedPath = path;
+
+    if (!this.caseSensitive) {
+      normalizedPath = normalizedPath.toLowerCase();
+    }
+    if (this.strict && !normalizedPath.endsWith('/')) {
+      normalizedPath += '/';
+    }
+
+    const allAliases = [normalizedPath, ...aliases.filter(also => also !== normalizedPath)];
+
+    const layer = new Layer(normalizedPath, { aliases: allAliases }, route.dispatch.bind(route));
+
+    layer.route = route;
+    layer.options.aliases = allAliases;
+
+    this.stack.push(layer);
+  }
 }
 
 export default Router;

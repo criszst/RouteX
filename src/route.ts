@@ -6,20 +6,25 @@ export class Route {
   path: string;
   stack: Layer[];
   methods: Record<string, boolean>;
+ // alias: string[];
 
   constructor(path: string) {
     this.path = path;
     this.stack = [];
     this.methods = {};
+   // this.alias = [];
   }
 
-  get(...handlers: Array<Function>): void {
+  get(aliases: string, ...handlers: Array<Function>): void {
     handlers.forEach((handler) => {
-      const layer = new Layer(this.path, {}, handler);
+      const layer = new Layer(this.path, {aliases: aliases}, handler);
 
       layer.method = 'get';
+      layer.alias = Array.isArray(aliases) ? aliases : [aliases];
+
       this.stack.push(layer);
     });
+
     this.methods['get'] = true;
   }
 
