@@ -79,7 +79,10 @@ export class Router {
     return route;
   }
 
-  
+
+  // TODO: create a alias to some routes and match against the main router
+  // example: /sendFile redirects to /send and its go on
+ 
   /**
    * Handles an incoming request and calls the matched route's dispatch function
    * @param req - The incoming request
@@ -206,6 +209,5 @@ export class Router {
 
 
 }
-
 
 export default Router;

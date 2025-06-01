@@ -1,16 +1,21 @@
-# 🚀 MyExpress  
+# 🚀 RouteX
 
 A lightweight Express-like framework that I built for fun. While I won’t be implementing all the features of Express, I’ll be adding the essential ones to keep the project clean and functional.  
 <br/>
 
 ## Checklist  
 
-- [x] Basic app with `send`, `post`, `res`, `req`, and `next` methods.  
-- [x] Recreated some libraries to reduce dependencies (better for security).  
-- [x] Interfaces to keep the code clean and maintainable.  
-- [x] Function to send an HTML file to the client.  
-- [ ] More built-in middlewares.  
-- [ ] Additional tests.  
+- [x] **Basic app structure** → Includes core methods like `send`, `post`, `res`, `req`, and `next`.  
+- [x] **Reduced dependencies** → Recreated essential libraries to improve security and minimize external code.  
+- [x] **TypeScript interfaces** → Used to ensure clean and maintainable code.  
+- [x] **HTML file sending** → Function to send an HTML file directly to the client. 
+- [ ] **IP Middleware** → Middleware with IP blocking and rate limiting features.  
+- [ ] **Rate Limiting Middleware** → Limit the number of requests per IP to prevent abuse.  
+- [ ] **IP Blocking Middleware** → Block access from specific IP addresses.  
+- [ ] **More built-in middlewares** → Add useful built-in middleware options for developers.  
+- [ ] **404 Handler** → Provide a default or customizable response for unmatched routes.  
+- [ ] **Simple Logger Middleware** → Log HTTP method, path, and timestamp for each request.  
+- [ ] **Additional tests** → Improve test coverage for stability and reliability.
 
 <br/>
 
@@ -21,6 +26,8 @@ A lightweight Express-like framework that I built for fun. While I won’t be im
 - **`download(filePath)`** → Sends a file to be downloaded by the client.  
 - **`redirect(url)`** → Redirects the client to a specific URL (public domain or local project file).  
 - **`sendFile(filePath)`** → Sends the content of a file to the client.  
+
+</br>
 
 ## Usage  
 
@@ -34,20 +41,22 @@ response.redirect("https://example.com"); // Redirects the user
 response.sendFile("./index.html"); // Sends the content of a file  
 ```
 
-<br/>
+See more example of usage at <a href="src/index.ts">index.ts</a>
+
+</br>
 
 ## Installation  
 
 First, clone the repository:  
 
 ```sh
-git clone https://github.com/criszst/MyExpress.git
+git clone https://github.com/criszst/RouteX.git
 ```
 
 Navigate into the project directory:  
 
 ```sh
-cd MyExpress
+cd RouteX
 ```
 
 Then, install dependencies:  
