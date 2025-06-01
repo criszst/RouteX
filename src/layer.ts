@@ -1,6 +1,5 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import { Route } from './route';
-import { timeStamp } from 'console';
 
 export class Layer {
     handle: Function;
@@ -40,17 +39,20 @@ export class Layer {
         `\x1b[34m->\x1b[0m \x1b[90m[${hours}:${minutes}:${seconds}.${milliseconds}]\x1b[0m  \x1b[36mComparing path\x1b[0m \x1b[35m'${path}'\x1b[0m \x1b[36mwith layer\x1b[0m \x1b[35m'${this.path}'\x1b[0m \x1b[36m[aliases: ${this.alias.join(', ')}]\x1b[0m\n`
       );
 
+      // for example, this console.log will output:
+      // -> [14:53:28.871]  Comparing path '/ip' with layer '/my/ip' [aliases: /my/ip, /ip]
+
       return this.path === path || this.alias.includes(path) || this.path === '*' || this.alias.includes('*');
       }
       
       handle_request(req: IncomingMessage, res: ServerResponse, next: Function): void {
-        console.log(`-> Executando handler para ${this.path}`);
+        console.log(`-> Executing handler for ${this.path}`);
         const fn = this.handle;
       
         try {
           fn(req, res, next);
         } catch (err) {
-          console.error(`\n-> Erro ao executar handler para ${this.path}:\n`, err);
+          console.error(`\n-> An error occurred while executing handler for ${this.path}:\n`, err);
           next(err);
         }
       }

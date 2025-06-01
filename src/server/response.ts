@@ -60,37 +60,25 @@ export class Response {
 
   public static download(res: ExtendedServerResponse): void {
 
-  res.download = function (path: string) {
-    if (!path) throw ErrorsDetails.create('Path Error', 'path is required', {
-      expected: 'non-empty string',
-      received: `${typeof path} / ${path}`,
-    });
+    res.download = function (path: string) {
+      if (!path) throw ErrorsDetails.create('Path Error', 'path is required', {
+        expected: 'non-empty string',
+        received: `${typeof path} / ${path}`,
+      });
 
 
-    const contentType = mime.getType(path) || 'application/octet-stream';
-    const stats = fs.statSync(path);
+      Response.handleFileRequest(path, this.req, this, (err?: Error) => {
+        if (err) {
+          this.statusCode = 404;
+          this.setHeader('Content-Type', 'application/json');
+          return this.end(JSON.stringify({ error: err.message }), 'utf-8');
+        }
 
-    this.setHeader('Access-Control-Allow-Origin', '*');
-    this.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
-    this.setHeader('Content-Type', contentType);
-    this.setHeader('Content-Disposition', `attachment; filename=${basename(path)}`);
-    this.setHeader('Content-Length', stats.size);
-
-    if (stats.size < 1024 * 1024) {
-      const buffer = fs.readFileSync(path);
-
-      this.end(buffer);
-    } 
-    
-    else {
-      const stream = fs.createReadStream(path);
-
-      stream.pipe(this);
-      stream.on('end', () => this.end());
-      stream.on('error', (err) => this.end(`Error: ${err.message}`));
-    }
-  };
-}
+        this.statusCode = 200;
+        this.setHeader('Content-Disposition', `attachment; filename=${basename(path)}`);
+      });
+    };
+  }
 
 
   /**
@@ -210,7 +198,6 @@ export class Response {
             return resolve()
           }
 
-
           const stream: ReadStream = fs.createReadStream(filePath);
 
           stream.pipe(this);
@@ -232,12 +219,59 @@ export class Response {
     };
   }
 
-  // TODO: Implement the handleFileRequest method to handle file requests between 
-  private static async handleFileRequest(req: IncomingMessage, res: ServerResponse, next: (err?: Error) => void): Promise<void> {
-  return new Promise((resolve, rejects) => {
-    
-  })
+  
+  // TODO: implement handleFileRequest as a middleware
+  /**
+   * Handles a file request.
+   *
+   * @param path - The path to the requested file.
+   * @param req - The incoming HTTP request.
+   * @param res - The HTTP response object to be sent back to the client.
+   * @param next - A callback function to pass control to the next middleware.
+   *
+   * @returns A promise that resolves when the file is sent or an error occurs.
+   *
+   * @throws An error with a status code of 404 if the requested file does not exist.
+   * @throws An error with a status code of 500 if an error occurs while reading the file.
+   */
+  private static async handleFileRequest(path: string, req: IncomingMessage, res: ServerResponse, next: (err?: Error) => void): Promise<void> {
+    try {
+      const filePath = join(__dirname, path ? path : `${req.url}`);
+
+      if (!fs.existsSync(filePath)) {
+        return next(
+          ErrorsDetails.create('File Not Found', 'The requested file does not exist',
+            { expected: 'a valid path', received: filePath },
+          )
+        );
+      }
+
+      const contentType = mime.getType(filePath) || 'application/octet-stream';
+      const stats = fs.statSync(filePath);
+
+      res.setHeader('Content-Type', contentType);
+      res.setHeader('Content-Length', stats.size);
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+
+      if (stats.size < 1024 * 1024) {
+        const buffer = fs.readFileSync(filePath);
+
+        res.write(buffer);
+        res.end();
+      }
+
+      else {
+        const stream = fs.createReadStream(filePath);
+
+        stream.pipe(res);
+        stream.on('end', () => res.end());
+        stream.on('error', (err) => res.end(`Error: ${err.message}`));
+      }
+    } catch (error: any) {
+      next(error);
+    }
   }
+
 }
-
-
+export default Response;

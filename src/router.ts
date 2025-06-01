@@ -75,8 +75,6 @@ export class Router {
     return route;
   }
 
-
-  // TODO: create a alias to some routes and match against the main router
   // example: /sendFile redirects to /send and its go on
  
   /**
@@ -130,8 +128,6 @@ export class Router {
  * @returns The pathname extracted from the request URL, or undefined if an error occurs.
  */
 
-// TODO: build a beautifuuull error message if an error occurs
-
   private getPathName(req: any): any {
     try {
       return parseUrl(req).pathname;
@@ -139,11 +135,19 @@ export class Router {
 
     catch (err) {
       if (err) {
+
         if (err instanceof Error) {
           return err.message;
-        } else {
-          return 'An unknown error occurred: \n' + err;
         }
+         else {
+          return ErrorsDetails.create(
+            'Path Error',
+            'Path is required', {
+            expected: 'non-empty string',
+            received: req,
+            })
+        }
+
       } else {
 
         return ErrorsDetails.create(

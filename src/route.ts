@@ -12,7 +12,6 @@ export class Route {
     this.path = path;
     this.stack = [];
     this.methods = {};
-   // this.alias = [];
   }
 
   get(aliases: string, ...handlers: Array<Function>): void {
