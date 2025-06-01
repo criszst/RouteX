@@ -1,5 +1,6 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import { Route } from './route';
+import { timeStamp } from 'console';
 
 export class Layer {
     handle: Function;
@@ -25,13 +26,21 @@ export class Layer {
      * Logs the comparison process to the console.
      * 
      * @param path - The path to be compared against the layer's path and aliases.
+     * @emits console.log - Logs the comparison details including the current time, path, layer path, and aliases.
      * @returns True if the path matches the layer's path or any alias, false otherwise.
      */
-
     match(path: string): boolean {
-        console.log(`-> Comparing path ${path} with layer ${this.path} [aliases: ${this.alias.join(', ')}]\n`);
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const seconds = now.getSeconds().toString().padStart(2, '0');
+      const milliseconds = now.getMilliseconds().toString().padStart(3, '0');
 
-        return this.path === path || this.alias.includes(path) || this.path === '*' || this.alias.includes('*');
+      console.log(
+        `\x1b[34m->\x1b[0m \x1b[90m[${hours}:${minutes}:${seconds}.${milliseconds}]\x1b[0m  \x1b[36mComparing path\x1b[0m \x1b[35m'${path}'\x1b[0m \x1b[36mwith layer\x1b[0m \x1b[35m'${this.path}'\x1b[0m \x1b[36m[aliases: ${this.alias.join(', ')}]\x1b[0m\n`
+      );
+
+      return this.path === path || this.alias.includes(path) || this.path === '*' || this.alias.includes('*');
       }
       
       handle_request(req: IncomingMessage, res: ServerResponse, next: Function): void {
