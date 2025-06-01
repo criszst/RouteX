@@ -59,13 +59,11 @@ export class Response {
 
 
   public static download(res: ExtendedServerResponse): void {
-
     res.download = function (path: string) {
       if (!path) throw ErrorsDetails.create('Path Error', 'path is required', {
         expected: 'non-empty string',
         received: `${typeof path} / ${path}`,
       });
-
 
       Response.handleFileRequest(path, this.req, this, (err?: Error) => {
         if (err) {
@@ -74,8 +72,6 @@ export class Response {
           return this.end(JSON.stringify({ error: err.message }), 'utf-8');
         }
 
-        this.statusCode = 200;
-        this.setHeader('Content-Disposition', `attachment; filename=${basename(path)}`);
       });
     };
   }
@@ -219,7 +215,7 @@ export class Response {
     };
   }
 
-  
+
   // TODO: implement handleFileRequest as a middleware
   /**
    * Handles a file request.
@@ -236,7 +232,7 @@ export class Response {
    */
   private static async handleFileRequest(path: string, req: IncomingMessage, res: ServerResponse, next: (err?: Error) => void): Promise<void> {
     try {
-      const filePath = join(__dirname, path ? path : `${req.url}`);
+      const filePath = join(__dirname, path);
 
       if (!fs.existsSync(filePath)) {
         return next(
@@ -246,23 +242,25 @@ export class Response {
         );
       }
 
-      const contentType = mime.getType(filePath) || 'application/octet-stream';
       const stats = fs.statSync(filePath);
 
-      res.setHeader('Content-Type', contentType);
       res.setHeader('Content-Length', stats.size);
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
 
       if (stats.size < 1024 * 1024) {
-        const buffer = fs.readFileSync(filePath);
 
-        res.write(buffer);
+        res.setHeader('Content-Disposition', `attachment; filename=${basename(filePath)}`);
+        res.setHeader('Content-Type', mime.getType(filePath) || 'application/octet-stream');
+        res.write('file downloaded successfully');
         res.end();
       }
-
       else {
         const stream = fs.createReadStream(filePath);
+
+        res.setHeader('Content-Disposition', `attachment; filename=${basename(filePath)}`);
+        res.setHeader('Content-Type', mime.getType(filePath) || 'application/octet-stream');
+        res.write('file downloaded successfully');
 
         stream.pipe(res);
         stream.on('end', () => res.end());

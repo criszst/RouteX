@@ -28,7 +28,7 @@ app.post('/post', (req: IncomingMessage, res: ExtendedServerResponse) => {
 
 
 app.get('/download', {aliases: '/downloadfile'}, (req: IncomingMessage, res: ExtendedServerResponse) => {
-  res.download('./send.html');
+  res.download('../../send.html');
 });
 
 
