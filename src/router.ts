@@ -28,10 +28,27 @@ export class Router {
    * @param path - URL path which the route is registered to
    * @param handlers - functions that will be called when the route is matched
    */
-  public get(path: GetOptions["path"], ...handlers: GetOptions["handlers"]): void {
-    const route = this.route(path);
-    route.get(...handlers);
+  public get(path: GetOptions["path"], options: { aliases?: string[]}, ...handlers: GetOptions["handlers"]): void {
+
+    if (typeof options.aliases === 'object') {
+      const mainHandler = handlers[0];
+      const alias = options.aliases;
+
+      if (alias) {
+        const aliases = Array.isArray(alias) ? alias : [alias];
+        aliases.forEach(a => this.registerRoute('get', a, mainHandler));
+      }
+
+      this.registerRoute('get', path, mainHandler);
+    } 
+    
+
+    // TODO: provide register route method
+      const route = this.route(path);
+      route.get(...handlers);
+    
   }
+
 
 
   /**
@@ -182,7 +199,13 @@ export class Router {
     return this;
   }
 
+  private registerRoute(method: 'get' | 'post', path: string, handler: Function) {
+  const route = this.route(path);
+  route[method](handler);
+}
+
 
 }
+
 
 export default Router;

@@ -10,14 +10,14 @@ const port = 3000
 type SvResponse = ExtendedServerResponse;
 
 
-app.get('/', (req: IncomingMessage, res: SvResponse, next: any) => {
+app.get('/', {alias: '/main'}, (req: IncomingMessage, res: SvResponse, next: any) => {
   console.log("next -> ", next.name);
 
   next();
 });
 
 
-app.get('/', (req: IncomingMessage, res: SvResponse) => {
+app.get('/', {alias: '/main'}, (req: IncomingMessage, res: SvResponse) => {
   res.json({'hello': 'world'})
 });
 
@@ -29,28 +29,31 @@ app.post('/post', (req: IncomingMessage, res: SvResponse) => {
 
 
 
-app.get('/download', (req: IncomingMessage, res: SvResponse) => {
+app.get('/download', {alias: '/downloadfile'}, (req: IncomingMessage, res: SvResponse) => {
   res.download('./send.html');
 });
 
 
-app.get('/reds', (req: IncomingMessage, res: SvResponse) => {
-  res.redirect('https://google.com');
+app.get('/reds', {alias: '/redirect'}, (req: IncomingMessage, res: SvResponse) => {
+  res.redirect('https://google.com')
 })
 
-
-app.get('/send', IPMiddleware, (req: IncomingMessage, res: SvResponse) => {
+app.get('/send', {alias: '/sendfile'}, (req: IncomingMessage, res: SvResponse) => {
   res.sendFile('send.html', {
-    attachment: false,
     headers: {
-      'X-Custom-Header': 'idk what put here',      
+      'X-Custom-Header': 'xpto',
+      'Content-Type': 'text/html',
+      'Content-Disposition': 'inline; filename="send.html"',
+      'Access-Control-Allow-Method': 'GET, OPTIONS,',
+      'Access-Control-Allow-Origin': '*',
     },
+    
   }, (err: any) => {
     if (err) {
       console.log(err);
     }
   });
-})
+});
 
 
 app.listen(port, () => {

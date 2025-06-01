@@ -99,8 +99,12 @@ export const prototype = {
    * @param path - URL path which the route is registered to
    * @param handlers - functions that will be called when the route is matched
    */
-  get(path: GetOptions["path"], ...handlers: GetOptions["handlers"]): void {
-    this.router.get(path, ...handlers)
+  get(path: GetOptions["path"], options: { aliases?: string}, ...handlers: GetOptions["handlers"]): void {
+    this.router.get(
+      path, 
+      options.aliases ? { aliases: Array.isArray(options.aliases) ? options.aliases : [options.aliases] } : {}, 
+    ...handlers
+  )
   },
 
 

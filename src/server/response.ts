@@ -27,7 +27,7 @@ export class Response {
   public static send(res: ExtendedServerResponse): void {
     res.send = function (body: object | string) {
       if (typeof body === 'object') {
-        this.setHeader('Access-Control-Allow-Method', 'POST');
+        this.setHeader('Access-Control-Allow-Methods', 'POST');
         this.setHeader('Content-Type', 'application/json');
         this.end(JSON.stringify(body), 'utf-8');
       } else {
@@ -39,7 +39,7 @@ export class Response {
 
   public static json(res: ExtendedServerResponse): void {
     res.json = function (body: Object | String) {
-      this.setHeader('Access-Control-Allow-Method', 'POST, GET');
+      this.setHeader('Access-Control-Allow-Methods', 'POST, GET');
       this.setHeader('Access-Control-Allow-Origin', '*');
 
 
@@ -52,47 +52,46 @@ export class Response {
         expected: typeof body,
       });
 
-      return this.send(JSON.stringify(body));
+      return this.send(body);
     };
   }
 
 
 
   public static download(res: ExtendedServerResponse): void {
-    res.download = function (path: string) {
-      if (!path) throw ErrorsDetails.create(
-        'Path Error',
-        'path is required', {
-        expected: 'non-empty string',
-        received: `${typeof path} / ${path} cannot be null or empty,`
-      })
+
+  res.download = function (path: string) {
+    if (!path) throw ErrorsDetails.create('Path Error', 'path is required', {
+      expected: 'non-empty string',
+      received: `${typeof path} / ${path}`,
+    });
 
 
-      const contentType = mime.getType(path) || 'application/octet-stream';
-      const stats = fs.statSync(path)
+    const contentType = mime.getType(path) || 'application/octet-stream';
+    const stats = fs.statSync(path);
 
-      this.setHeader('Access-Control-Allow-Method', 'POST');
-      this.setHeader('Access-Control-Allow-Origin', '*');
+    this.setHeader('Access-Control-Allow-Origin', '*');
+    this.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
+    this.setHeader('Content-Type', contentType);
+    this.setHeader('Content-Disposition', `attachment; filename=${basename(path)}`);
+    this.setHeader('Content-Length', stats.size);
 
-      this.setHeader('Content-Type', contentType);
-      this.setHeader('Content-Disposition', `attachment; filename=${path.split('/').pop()}`);
+    if (stats.size < 1024 * 1024) {
+      const buffer = fs.readFileSync(path);
 
+      this.end(buffer);
+    } 
+    
+    else {
+      const stream = fs.createReadStream(path);
 
-      // verifing if the file has a size more than 10mb. If no, just read entire content
-      // otherwise, process the file in chunks 
-      // i think this could be more efficient, but at the moment im just going to do it like this
+      stream.pipe(this);
+      stream.on('end', () => this.end());
+      stream.on('error', (err) => this.end(`Error: ${err.message}`));
+    }
+  };
+}
 
-      let fileContent: Buffer | ReadStream;
-
-      if (stats.size < 1024 * 1024) fileContent = fs.readFileSync(path);
-
-      else fileContent = fs.createReadStream(path)
-
-
-      this.write(fileContent);
-      this.end();
-    };
-  }
 
   /**
    * Adds a redirect method to the response object that performs a 302 redirect.
@@ -100,7 +99,6 @@ export class Response {
    * @param res - The response object to which the redirect method is added.
    * 
   */
-
   public static redirect(res: ExtendedServerResponse): void {
     res.redirect = function (url: string): void {
       if (!url) {
@@ -113,7 +111,7 @@ export class Response {
       }
 
       this.statusCode = 302;
-      this.setHeader('Access-Control-Allow-Method', 'POST, GET');
+      this.setHeader('Access-Control-Allow-Methods', 'POST, GET');
       this.setHeader('Access-Control-Allow-Origin', '*');
       this.setHeader('Location', url);
       this.end();
@@ -144,8 +142,6 @@ export class Response {
   public static sendFile(res: ExtendedServerResponse): Promise<void> | void {
     res.sendFile = function (path: string, options?: Options, callback?: (err?: Error | null) => void): Promise<void> {
 
-
-
       return new Promise(async (resolve, rejects) => {
         try {
           const filePath = options?.root ? join(options.root, path) : path
@@ -158,7 +154,7 @@ export class Response {
               received: path,
             });
 
-          if (!fs.existsSync(path))
+          if (!fs.existsSync(filePath))
             throw ErrorsDetails.create(
               'Path Error',
               'This path does not exist', {
@@ -170,7 +166,7 @@ export class Response {
             throw ErrorsDetails.create(
               'Callback Error',
               'Callback must be a function', {
-              expected: 'non-empty object',
+              expected: 'function',
               received: typeof callback,
             })
           }
@@ -189,9 +185,10 @@ export class Response {
           const stats: fs.Stats = fs.statSync(filePath)
 
 
-          this.setHeader('Access-Control-Allow-Method', 'POST');
+          this.setHeader('Access-Control-Allow-Methods', 'POST');
           this.setHeader('Content-Type', contentType)
           this.setHeader('Content-Disposition', `${options?.attachment ? 'attachment' : 'inline'}; filename=${basename(filePath)}`);
+          this.setHeader('Content-Length', stats.size);
 
           if (options?.maxAge !== undefined) {
             this.setHeader('Cache-Control', `public, max-age=${options.maxAge}`)
@@ -234,4 +231,13 @@ export class Response {
       })
     };
   }
+
+  // TODO: Implement the handleFileRequest method to handle file requests between 
+  private static async handleFileRequest(req: IncomingMessage, res: ServerResponse, next: (err?: Error) => void): Promise<void> {
+  return new Promise((resolve, rejects) => {
+    
+  })
+  }
 }
+
+

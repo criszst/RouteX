@@ -9,10 +9,12 @@ const setPrototypeOf = require('setprototypeof')
  * @returns {Function} the middleware function.
  */
 
-exports.init = function(app: { response: object | null; }): Function {
-    return function expressInit(req: any, res: any, next: () => void) {
+export function init(app: { response: object | null }): Function {
 
-      Object.setPrototypeOf(res, app.response);
-      next();
-    }
+  return function expressInit(req: any, res: any, next: () => void) {
+    Object.setPrototypeOf(res, app.response);
+
+    next();
+    
   }
+}
