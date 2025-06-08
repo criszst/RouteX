@@ -1,3 +1,5 @@
+'use strict';
+
 import fs, { ReadStream, promises as fsPromises } from 'fs'
 import mime from 'mime';
 
@@ -6,7 +8,7 @@ import { basename, join } from 'path';
 import ErrorsDetails from "../errors/details";
 import Options from "../interfaces/IOptions";
 
-import ExtendedServerResponse from "../interfaces/IServerResponse";
+import ExtendedServerResponse from "../interfaces/server/IServerResponse";
 import { IPMiddleware } from '../middleware/ip';
 import { IncomingMessage, ServerResponse } from 'http';
 

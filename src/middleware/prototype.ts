@@ -95,16 +95,17 @@ export const prototype = {
 
   
   /**
-   * Register a route for HTTP GET method
-   * @param path - URL path which the route is registered to
-   * @param handlers - functions that will be called when the route is matched
+   * Registers a route for the HTTP GET method.
+   * @param path - The URL path to register the route on.
+   * @param options - Optional settings for the route, including aliases.
+   * @param handlers - Functions to handle the route when matched.
    */
-  get(path: GetOptions["path"], options: { aliases?: string}, ...handlers: GetOptions["handlers"]): void {
-  this.router.get(
-    path,
-    options.aliases ? { aliases: Array.isArray(options.aliases) ? options.aliases[0] : options.aliases } : {},
-    ...handlers
-  )
+  get(path: GetOptions["path"], options: { aliases?: string }, ...handlers: GetOptions["handlers"]): void {
+    this.router.get(
+      path,
+      options.aliases ? { aliases: Array.isArray(options.aliases) ? options.aliases : [options.aliases] } : {},
+      ...handlers
+    );
   },
 
 

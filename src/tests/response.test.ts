@@ -4,7 +4,7 @@ import mime from 'mime';
 import path from 'path';
 
 import { Response } from "../server/response";
-import ExtendedServerResponse from "../interfaces/IServerResponse";
+import ExtendedServerResponse from "../interfaces/server/IServerResponse";
 
 const fs = require('fs');
 

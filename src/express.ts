@@ -5,10 +5,13 @@ import { merge } from "./libs/merge"
 
 import { IncomingMessage, ServerResponse } from "http"
 import { Response } from "./server/response"
-import ExtendedServerResponse from "./interfaces/IServerResponse"
+
+
+import IServerResponse from "./interfaces/server/IServerResponse"
+import IServerRequest from "./interfaces/server/IServerRequest"
 
 function createApp(): App {
-  const app = ((alias: string, req: IncomingMessage, res: ServerResponse, next: any): void => {
+  const app = ((alias: string, req: IServerRequest, res: ServerResponse, next: any): void => {
     app.handle(alias, req, res, next)
   }) as unknown as App
 
@@ -40,9 +43,8 @@ function createApp(): App {
   const req = Object.create(IncomingMessage.prototype)
   const res = Object.create(ServerResponse.prototype)
 
-  app.request = Object.create(req, appReference.prototype);
-  app.response = Object.create(res, appReference.prototype);
-  new Response().initializer(app.response as ExtendedServerResponse);
+  app.request = Object.create(req as IServerRequest, appReference.prototype);
+  app.response = Object.create(res as IServerResponse, appReference.prototype);
 
 
   app.init()

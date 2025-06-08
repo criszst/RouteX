@@ -1,9 +1,10 @@
-import { IncomingMessage, ServerResponse } from 'http';
-import ExtendedServerResponse from "../interfaces/IServerResponse";
+import IServerRequest from './server/IServerRequest';
+import IServerResponse from "./server/IServerResponse";
+
 
 interface GetOptions {
     path: string;
-    handlers: Array<(req: IncomingMessage, res: ExtendedServerResponse, next?: any) => void>;
+    handlers: Array<(req: IServerRequest, res: IServerResponse, next?: any) => void>;
   }
   
 

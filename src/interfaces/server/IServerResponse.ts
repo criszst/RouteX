@@ -1,8 +1,8 @@
-import {IncomingMessage, ServerResponse} from "http";
+import {ServerResponse} from "http";
 
-import Options from "./IOptions";
+import Options from "../IOptions";
 
-export default interface ExtendedServerResponse extends ServerResponse {
+export default interface IServerResponse extends ServerResponse {
   send: (body: object | string) => void;
   json: (body: object | string) => void;
   download: (path: string) => void;
