@@ -41,10 +41,7 @@ export class Response {
 
   public static json(res: ExtendedServerResponse): void {
     res.json = function (body: Object | String) {
-      this.setHeader('Access-Control-Allow-Methods', 'POST, GET');
-      this.setHeader('Access-Control-Allow-Origin', '*');
-
-
+      // this.setHeader('Access-Control-Allow-Methods', 'GET');
       this.setHeader('Content-Type', 'application/json');
 
       if (!body) return ErrorsDetails.create(
@@ -128,91 +125,78 @@ export class Response {
   public static sendFile(res: ExtendedServerResponse): Promise<void> | void {
     res.sendFile = function (path: string, options?: Options, callback?: (err?: Error | null) => void): Promise<void> {
 
-      return new Promise(async (resolve, rejects) => {
-        try {
-          const filePath = options?.root ? join(options.root, path) : path
+      return new Promise(async (resolve: () => void, reject: (err: Error) => void) => {
 
-          if (!path)
-            throw ErrorsDetails.create(
-              'Path Error',
-              'Path is required', {
-              expected: 'non-empty string',
-              received: path,
-            });
+        const filePath = options?.root ? join(options.root, path) : path
 
-          if (!fs.existsSync(filePath))
-            throw ErrorsDetails.create(
-              'Path Error',
-              'This path does not exist', {
-              expected: 'a valid path',
-              received: filePath,
-            });
-
-          if (callback && typeof callback !== 'function') {
-            throw ErrorsDetails.create(
-              'Callback Error',
-              'Callback must be a function', {
-              expected: 'function',
-              received: typeof callback,
-            })
-          }
-
-          if (!this || !(this instanceof ServerResponse)) {
-            throw ErrorsDetails.create(
-              'Response Error',
-              'sendFile must be called on an instance of ServerResponse or ExtendedServerResponse', {
-              expected: 'ServerResponse or ExtendedServerResponse instance',
-              received: this,
-            });
-          }
-
-
-          const contentType: string = mime.getType(filePath) || 'application/octet-stream';
-          const stats: fs.Stats = fs.statSync(filePath)
-
-
-          this.setHeader('Access-Control-Allow-Methods', 'POST');
-          this.setHeader('Content-Type', contentType)
-          this.setHeader('Content-Disposition', `${options?.attachment ? 'attachment' : 'inline'}; filename=${basename(filePath)}`);
-          this.setHeader('Content-Length', stats.size);
-
-          if (options?.maxAge !== undefined) {
-            this.setHeader('Cache-Control', `public, max-age=${options.maxAge}`)
-          }
-
-          if (options?.headers) {
-            for (const [key, value] of Object.entries(options.headers)) {
-              this.setHeader(key, value)
-            }
-          }
-
-          if (stats.size < 1024 * 1024) {
-            const data: Buffer = await fsPromises.readFile(filePath);
-
-            this.write(data);
-            this.end();
-
-            callback?.(null)
-            return resolve()
-          }
-
-          const stream: ReadStream = fs.createReadStream(filePath);
-
-          stream.pipe(this);
-
-          stream.on('end', () => {
-            callback?.(null);
-            resolve();
+        if (!path)
+          throw ErrorsDetails.create(
+            'Path Error',
+            'Path is required', {
+            expected: 'non-empty string',
+            received: path,
           });
 
+        if (!fs.existsSync(filePath))
+          throw ErrorsDetails.create(
+            'Path Error',
+            'This path does not exist', {
+            expected: 'a valid path',
+            received: filePath,
+          });
 
-          stream.on('error', (err) =>
-            callback?.call(this, err));
-
-        } catch (err: any) {
-          callback?.call(this, err)
-          rejects(err)
+        if (callback && typeof callback !== 'function') {
+          throw ErrorsDetails.create(
+            'Callback Error',
+            'Callback must be a function', {
+            expected: 'function',
+            received: typeof callback,
+          })
         }
+
+        if (!this || !(this instanceof ServerResponse)) {
+          throw ErrorsDetails.create(
+            'Response Error',
+            'sendFile must be called on an instance of IServerResponse interface', {
+            expected: 'IServerResponse instance',
+            received: this,
+          });
+        }
+
+
+        const contentType: string = mime.getType(filePath) || 'application/octet-stream';
+        const stats: fs.Stats = fs.statSync(filePath)
+
+
+        this.setHeader('Access-Control-Allow-Methods', 'POST');
+        this.setHeader('Content-Type', contentType)
+        this.setHeader('Content-Disposition', `${options?.attachment ? 'attachment' : 'inline'}; filename=${basename(filePath)}`);
+        this.setHeader('Content-Length', stats.size);
+
+        if (options?.maxAge !== undefined) {
+          this.setHeader('Cache-Control', `public, max-age=${options.maxAge}`)
+        }resolve()
+
+        if (options?.headers) {
+          for (const [key, value] of Object.entries(options.headers)) {
+            this.setHeader(key, value)
+          }
+        }
+
+        Response.handleFileRequest(filePath, this.req, this, (err?: Error) => {
+
+          resolve()
+
+          if (err) {
+            this.statusCode = 404;
+            this.setHeader('Content-Type', 'application/json');
+            callback?.call(this, err)
+
+            reject(err)
+
+            return this.end(JSON.stringify({ error: err.message }), 'utf-8');
+          }
+        })
       })
     };
   }
@@ -232,10 +216,9 @@ export class Response {
    * @throws An error with a status code of 404 if the requested file does not exist.
    * @throws An error with a status code of 500 if an error occurs while reading the file.
    */
-  private static async handleFileRequest(path: string, req: IncomingMessage, res: ServerResponse, next: (err?: Error) => void): Promise<void> {
+  private static async handleFileRequest(filePath: string, req: IncomingMessage, res: ServerResponse, next: (err?: Error) => void): Promise<void> {
     try {
-      const filePath = join(__dirname, path);
-
+      
       if (!fs.existsSync(filePath)) {
         return next(
           ErrorsDetails.create('File Not Found', 'The requested file does not exist',
@@ -250,11 +233,10 @@ export class Response {
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
 
-      if (stats.size < 1024 * 1024) {
+      if (stats.size < 1024 * 1024 * 10) {
 
         res.setHeader('Content-Disposition', `attachment; filename=${basename(filePath)}`);
         res.setHeader('Content-Type', mime.getType(filePath) || 'application/octet-stream');
-        res.write('file downloaded successfully');
         res.end();
       }
       else {
@@ -262,7 +244,6 @@ export class Response {
 
         res.setHeader('Content-Disposition', `attachment; filename=${basename(filePath)}`);
         res.setHeader('Content-Type', mime.getType(filePath) || 'application/octet-stream');
-        res.write('file downloaded successfully');
 
         stream.pipe(res);
         stream.on('end', () => res.end());

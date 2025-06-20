@@ -42,8 +42,14 @@ export class Layer {
       // for example, this console.log will output:
       // -> [14:53:28.871]  Comparing path '/ip' with layer '/my/ip' [aliases: /my/ip, /ip]
 
-      return this.path === path || this.alias.includes(path) || this.path === '*' || this.alias.includes('*');
-      }
+    if (this.alias.length === 0) {
+      console.log(`\x1b[34m->\x1b[0m \x1b[90m[${hours}:${minutes}:${seconds}.${milliseconds}]\x1b[0m  \x1b[36mNo aliases found for layer\x1b[0m \x1b[35m'${this.path}'\x1b[0m\n`);
+    } else {
+      return path === this.path || this.alias.includes(path);
+    }
+    
+      return path === this.path;
+    }
       
       handle_request(req: IncomingMessage, res: ServerResponse, next: Function): void {
         console.log(`-> Executing handler for ${this.path}`);

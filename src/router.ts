@@ -3,6 +3,7 @@ import { Route } from './route';
 import { Layer } from './layer';
 import GetOptions from './interfaces/IProtoype';
 import ErrorsDetails from './errors/details';
+
 const parseUrl = require('parseurl');
 
 // routing system for handling HTTP requests
@@ -39,7 +40,7 @@ export class Router {
       : [options.aliases]
     : [];
 
-  // Sempre registra a rota principal
+  // Register the route with the specified path and aliases
   this.registerRoute('get', path, { aliases: [path, ...aliases] }, ...handlers);
 }
 
@@ -185,6 +186,7 @@ export class Router {
     if (Array.isArray(fn)) {
       fn.forEach((handler) => {
         const layer = new Layer('/', {}, handler);
+
         layer.route = undefined;
         this.stack.push(layer);
       });
@@ -230,6 +232,7 @@ export class Router {
     layer.route = route;
     layer.options.aliases = allAliases;
 
+    this.stack = this.stack.filter(l => l.path !== normalizedPath || l.route?.path !== path);
     this.stack.push(layer);
   }
 }

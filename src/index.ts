@@ -3,9 +3,9 @@ import { app } from "./express"
 import { IncomingMessage } from "http";
 import IServerResponse from "./interfaces/server/IServerResponse";
 import IServerRequest from "./interfaces/server/IServerRequest";
+import path from "path";
 
 const port = 3000;
-
 
 
 app.get('/', {aliases: '/main'}, (req: IServerRequest, res: IServerResponse, next: any) => {
@@ -31,7 +31,7 @@ app.post('/post', (req: IServerRequest, res: IServerResponse) => {
 
 
 app.get('/download', {aliases: '/downloadfile'}, (req: IServerRequest, res: IServerResponse) => {
-  res.download('../../send.html');
+  res.download('../../../send.html');
 });
 
 
@@ -40,7 +40,7 @@ app.get('/reds', {aliases: '/redirect'}, (req: IServerRequest, res: IServerRespo
 })
 
 app.get('/send', {aliases: '/sendfile'}, (req: IServerRequest, res: IServerResponse) => {
-  res.sendFile('send.html', {
+  res.sendFile(path.join(__dirname, '../src/send.html'), {
     headers: {
       'X-Custom-Header': 'xpto',
       'Content-Type': 'text/html',

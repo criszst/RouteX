@@ -14,8 +14,14 @@ export class Request {
   }
 
 
+  /**
+   * Returns the HTTP method of the request. If the request method is not specified,
+   * the value of the "X-HTTP-Method-Override" header is returned if present.
+   * @returns The HTTP method of the request as a string.
+   */
   public get method(): IncomingMessage["method"] {
-    // for some reason, when we use post method, the req.method return 'get'
+    // TODO: change the logic to handle method override correctly
+    
     if (!this.req.method) {
       return this.req.headers["x-http-method-override"] as string;
     }
@@ -23,9 +29,20 @@ export class Request {
     return this.req.method;
   }
 
+  /**
+   * Returns the URL of the request. If the request URL is not specified,
+   * the root URL "/" is returned.
+   * @returns The URL of the request as a string.
+   */
   public get url(): string {
     return this.req.url || "/";
   }
+
+  /**
+   * Returns the headers of the request as an object.
+   * @returns The headers of the request as an object.
+   */
+/*******  e2339da0-f304-4ab1-9bf1-04b099306551  *******/    
 
   public get headers(): IncomingMessage["headers"] {
     return this.req.headers;

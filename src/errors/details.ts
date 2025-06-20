@@ -14,7 +14,7 @@ class ErrorsDetails extends Error {
   }
 
   public static create(errorName: string, message: string, details: IDetails): ErrorsDetails {
-    const expectedError = `${message}\n
+    const expectedError = `${message}
 ------> ${details.expected} expected, but " ${details.received} " does not match\n`;
 
     return new ErrorsDetails(errorName, expectedError, details);
