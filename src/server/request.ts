@@ -20,10 +20,14 @@ export class Request {
    * @returns The HTTP method of the request as a string.
    */
   public get method(): IncomingMessage["method"] {
-    // TODO: change the logic to handle method override correctly
+    const override = this.req.headers["x-http-method-override"];
     
     if (!this.req.method) {
-      return this.req.headers["x-http-method-override"] as string;
+      return "GET";
+    }
+
+    if (override && typeof override === "string") {
+      return override.toUpperCase();
     }
 
     return this.req.method;
