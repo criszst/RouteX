@@ -5,7 +5,7 @@ const blockedIps: Map<string, boolean> = new Map<string, boolean>([
    ['127.0.0.1', true], // IPv4 localhost
    ['192.168.0.1', true], // IPv6 loopback
    ['192.168.0.124', true], // my home
-    ['::ffff:127.0.0.1', true],
+  
 ]);
 
 const ipRequestCount = new Map<string, number>();
