@@ -1,5 +1,6 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import { Route } from './route';
+import { IPMiddleware } from './middleware/ip';
 
 export class Layer {
     handle: Function;
@@ -52,6 +53,7 @@ export class Layer {
     }
       
       handle_request(req: IncomingMessage, res: ServerResponse, next: Function): void {
+        
         console.log(`-> Executing handler for ${this.path}`);
         const fn = this.handle;
       

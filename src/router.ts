@@ -3,6 +3,7 @@ import { Route } from './route';
 import { Layer } from './layer';
 import GetOptions from './interfaces/IProtoype';
 import ErrorsDetails from './errors/details';
+import { IPMiddleware } from './middleware/ip';
 
 const parseUrl = require('parseurl');
 
@@ -107,7 +108,9 @@ export class Router {
         if (!route) {
           continue;
         }
-  
+
+        
+        IPMiddleware(req, res, () => {});
         route.stack[0].handle_request(req, res, next);
       }
   

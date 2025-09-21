@@ -9,7 +9,7 @@ import ErrorsDetails from "../errors/details";
 import Options from "../interfaces/IOptions";
 
 import ExtendedServerResponse from "../interfaces/server/IServerResponse";
-import { IPMiddleware } from '../middleware/ip';
+
 import { IncomingMessage, ServerResponse } from 'http';
 
 export class Response {

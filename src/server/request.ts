@@ -45,8 +45,7 @@ export class Request {
   /**
    * Returns the headers of the request as an object.
    * @returns The headers of the request as an object.
-   */
-/*******  e2339da0-f304-4ab1-9bf1-04b099306551  *******/    
+   */  
 
   public get headers(): IncomingMessage["headers"] {
     return this.req.headers;
