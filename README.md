@@ -10,7 +10,7 @@ A lightweight Express-like framework that I built for fun. While I won’t be im
 - [x] **TypeScript interfaces** → Used to ensure clean and maintainable code.  
 - [x] **HTML file sending** → Function to send an HTML file directly to the client. 
 - [x] **Aliases to Router** -> Aliases to some routes pages, to increase readability and ease of use.
-- [ ] **IP Middleware** → Middleware with IP blocking and rate limiting features.  
+- [x] **IP Middleware** → Middleware with IP blocking and rate limiting features.  
 - [ ] **More built-in middlewares** → Add useful built-in middleware options for developers.  
 - [ ] **404 Handler** → Provide a default or customizable response for unmatched routes.  
 - [ ] **Simple Logger Middleware** → Log HTTP method, path, and timestamp for each request.  
