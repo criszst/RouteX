@@ -12,4 +12,6 @@ export default interface IServerResponse extends ServerResponse {
     options?: Options,
     callback?: (err?: Error | null) => void
   ) => Promise<void>;
+
+  test: () => void;
 }

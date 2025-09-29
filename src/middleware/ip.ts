@@ -1,11 +1,11 @@
 import { ServerResponse, IncomingMessage } from "http";
 
 const blockedIps: Map<string, boolean> = new Map<string, boolean>([
-   ['::1', true], // IPv6 localhost
-   ['127.0.0.1', true], // IPv4 localhost
-   ['192.168.0.1', true], // IPv6 loopback
-   ['192.168.0.124', true], // my home
-  
+  //  ['::1', true], // IPv6 localhost
+  //  ['127.0.0.1', true], // IPv4 localhost
+  //  ['192.168.0.1', true], // IPv6 loopback
+  //  ['192.168.0.124', true], // IPv4 loopback
+    // ['::ffff:127.0.0.1', true],
 ]);
 
 const ipRequestCount = new Map<string, number>();
@@ -29,7 +29,7 @@ const blockIpsMiddleware = (req: IncomingMessage, res: ServerResponse, next: () 
 
     return res.write(JSON.stringify({
       error: 'Access denied',
-      message: 'You are not allowed to access this resource.',
+      message: '\n You are not allowed to access this resource.',
     }));
   }
   if (!ip) {

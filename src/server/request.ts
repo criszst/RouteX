@@ -10,7 +10,6 @@ export class Request {
 
   init(): void {
     this.req.socket.setTimeout(0); 
-  
   }
 
 
@@ -50,4 +49,9 @@ export class Request {
   public get headers(): IncomingMessage["headers"] {
     return this.req.headers;
   }
+
+  public get cookies(): IncomingMessage["headers"]["cookie"] | String {
+    return this.req.headers.cookie;
+  }
+
 }

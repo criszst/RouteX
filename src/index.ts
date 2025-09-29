@@ -40,29 +40,46 @@ app.get('/reds', {aliases: '/redirect'}, (req: IServerRequest, res: IServerRespo
 })
 
 app.get('/send', {aliases: '/sendfile'}, (req: IServerRequest, res: IServerResponse) => {
-  res.sendFile(path.join(__dirname, '../src/send.html'), {
-    headers: {
-      'X-Custom-Header': 'xpto',
-      'Content-Type': 'text/html',
-      'Content-Disposition': 'inline; filename="send.html"',
-      'Access-Control-Allow-Method': 'GET, OPTIONS,',
-      'Access-Control-Allow-Origin': '*',
-    },
+
+  res.sendFile(path.join(__dirname, '/send.html'), {
     
-  }, (err: any) => {
+    // EXAMPLE
+    
+    // headers: {
+    //   'X-Custom-Header': 'xpto',
+    //   'Content-Type': 'text/html',
+    //   'Content-Disposition': 'inline; filename="send.html"',
+    //   'Access-Control-Allow-Method': 'GET, OPTIONS,',
+    //   'Access-Control-Allow-Origin': '*',
+    // },
+    
+  },
+   (err: any) => {
     if (err) {
       console.log(err);
     }
   });
 
   console.log(req.method)
+  console.log(__dirname + '/send.html');
 });
 
 app.get('/my/ip', {aliases: '/ip'}, (req: IServerRequest, res: IServerResponse) => {
   res.json({'ip': req.socket.remoteAddress || req.socket.localAddress || 'IP not found'});
 });
 
+app.get('/cookies', {aliases: '/getcookies'}, (req: IServerRequest, res: IServerResponse) => {
+  req.cookies = {key: 'value', key2: 'value2'}
+  res.json({'cookies': req.cookies || 'No cookies found'});
+});
+
+app.get('/test', {aliases: '/testmethod'}, (req: IServerRequest, res: IServerResponse) => {
+  res.test();
+  res.json({'test': 'test method called'});
+});
+
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}:\n-> http://localhost:${port}`);
 });
+

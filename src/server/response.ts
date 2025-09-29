@@ -164,18 +164,10 @@ export class Response {
         }
 
 
-        const contentType: string = mime.getType(filePath) || 'application/octet-stream';
-        const stats: fs.Stats = fs.statSync(filePath)
-
-
-        this.setHeader('Access-Control-Allow-Methods', 'POST');
-        this.setHeader('Content-Type', contentType)
-        this.setHeader('Content-Disposition', `${options?.attachment ? 'attachment' : 'inline'}; filename=${basename(filePath)}`);
-        this.setHeader('Content-Length', stats.size);
 
         if (options?.maxAge !== undefined) {
           this.setHeader('Cache-Control', `public, max-age=${options.maxAge}`)
-        }resolve()
+        }
 
         if (options?.headers) {
           for (const [key, value] of Object.entries(options.headers)) {
@@ -185,7 +177,7 @@ export class Response {
 
         Response.handleFileRequest(filePath, this.req, this, (err?: Error) => {
 
-          resolve()
+          resolve();
 
           if (err) {
             this.statusCode = 404;
@@ -218,7 +210,7 @@ export class Response {
    */
   private static async handleFileRequest(filePath: string, req: IncomingMessage, res: ServerResponse, next: (err?: Error) => void): Promise<void> {
     try {
-      
+
       if (!fs.existsSync(filePath)) {
         return next(
           ErrorsDetails.create('File Not Found', 'The requested file does not exist',
@@ -228,26 +220,29 @@ export class Response {
       }
 
       const stats = fs.statSync(filePath);
+      const contentType = mime.getType(filePath) || 'application/octet-stream';
 
       res.setHeader('Content-Length', stats.size);
+      res.setHeader('Content-Type', 'text/html');
+      res.setHeader('Content-Disposition', `inline; filename=${basename(filePath)}`);
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
 
       if (stats.size < 1024 * 1024 * 10) {
+        const fileContent = await fs.promises.readFile(filePath);
 
-        res.setHeader('Content-Disposition', `attachment; filename=${basename(filePath)}`);
-        res.setHeader('Content-Type', mime.getType(filePath) || 'application/octet-stream');
-        res.end();
+        res.end(fileContent);
       }
       else {
         const stream = fs.createReadStream(filePath);
 
-        res.setHeader('Content-Disposition', `attachment; filename=${basename(filePath)}`);
-        res.setHeader('Content-Type', mime.getType(filePath) || 'application/octet-stream');
-
         stream.pipe(res);
         stream.on('end', () => res.end());
-        stream.on('error', (err) => res.end(`Error: ${err.message}`));
+
+        stream.on('error', (err) => {
+          res.statusCode = 500;
+          res.end(`Error reading file: ${err.message}`);
+        });
       }
     } catch (error: any) {
       next(error);

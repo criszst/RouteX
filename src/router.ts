@@ -118,7 +118,7 @@ export class Router {
         out();
       } else if (!match) {
         res.statusCode = 404;
-        res.end('This route does not exist');
+        res.end('\n-> This route does not exist');
       }
     };
   
