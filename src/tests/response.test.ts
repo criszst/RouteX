@@ -1,6 +1,5 @@
 import {describe, expect, it} from '@jest/globals';
-import mime from 'mime';
-
+const mime = require('mime');
 import path from 'path';
 
 import { Response } from "../server/response";
