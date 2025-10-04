@@ -1,7 +1,7 @@
 'use strict';
 
 import fs, { ReadStream, promises as fsPromises } from 'fs'
-import mime from 'mime';
+const mime = require('mime');
 
 import { basename, join } from 'path';
 

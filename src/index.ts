@@ -78,6 +78,10 @@ app.get('/test', {aliases: '/testmethod'}, (req: IServerRequest, res: IServerRes
   res.json({'test': 'test method called'});
 });
 
+app.get('/esp32', {aliases: '/esp'}, (req: IServerRequest, res: IServerResponse) => {
+  res.json({'message from esp32: -> ': req.body})
+});
+
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}:\n-> http://localhost:${port}`);
