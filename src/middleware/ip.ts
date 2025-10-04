@@ -2,8 +2,8 @@ import { ServerResponse, IncomingMessage } from "http";
 
 const blockedIps: Map<string, boolean> = new Map<string, boolean>([
    ['::1', true], // IPv6 localhost
-   ['127.0.0.1', true], // IPv4 localhost
-   ['192.168.0.1', true], // IPv6 loopback
+  //  ['127.0.0.1', true], // IPv4 localhost
+  //  ['192.168.0.1', true], // IPv6 loopback
   
 ]);
 
