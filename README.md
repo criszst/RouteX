@@ -1,4 +1,4 @@
-# 🚀 RouteX
+# RouteX
 
 A lightweight Express-like framework that I built for fun. While I won’t be implementing all the features of Express, I’ll be adding the essential ones to keep the project clean and functional.  
 <br/>
