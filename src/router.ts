@@ -110,7 +110,7 @@ export class Router {
         }
 
         
-        IPMiddleware(req, res, () => {});
+        IPMiddleware.IpMiddlewareHandler(req, res, () => {});
         route.stack[0].handle_request(req, res, next);
       }
   

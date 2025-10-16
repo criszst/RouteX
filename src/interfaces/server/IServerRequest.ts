@@ -6,5 +6,4 @@ export default interface IServerRequest extends IncomingMessage {
   headers: IncomingHttpHeaders; 
   body?: any; // Optional request body, can be used for POST/PUT requests
   cookies?: { [key: string]: string }; // Optional cookies parsed from the request headers
-  test: any;
 }

@@ -1,72 +1,78 @@
 import { ServerResponse, IncomingMessage } from "http";
 
-const blockedIps: Map<string, boolean> = new Map<string, boolean>([
-   ['::1', true], // IPv6 localhost
-  //  ['127.0.0.1', true], // IPv4 localhost
-  //  ['192.168.0.1', true], // IPv6 loopback
-  
-]);
-
-const ipRequestCount = new Map<string, number>();
-
-const IPMiddleware = (req: IncomingMessage, res: ServerResponse, next: () => void): ServerResponse | void => {
-  
-  blockIpsMiddleware(req, res, next);
-
-   console.log('IP Middleware activated');
-};
-
-
-
-const blockIpsMiddleware = (req: IncomingMessage, res: ServerResponse, next: () => void) => {
-  const ip = req.socket.remoteAddress || req.connection.remoteAddress || '';
-
-  console.log(`Incoming request from IP: ${ip}`);
-
-  if (ip && blockedIps.has(ip)) {
-    res.writeHead(403, { 'Content-Type': 'text/plain' });
-
-    return res.write(JSON.stringify({
-      error: 'Access denied',
-      message: '\n You are not allowed to access this resource.',
-    }));
-  }
-  if (!ip) {
-    res.writeHead(400, { 'Content-Type': 'application/json' });
-
-    return res.write(JSON.stringify({
-      error: 'Bad Request',
-      message: 'IP address not found.',
-    }));
+class IPMiddleware {
+  constructor() {
+    console.log('IP Middleware initialized');
   }
 
-  next();
-};
+  private static instance: IPMiddleware;
 
-// const rateLimitMiddleware = (req: IncomingMessage, res: ServerResponse, next: () => void): ServerResponse | void => {
-//   const ip = req.socket.remoteAddress || req.connection.remoteAddress || '';
-//   const count = ipRequestCount.get(ip) || 0;
-//   const limit = 10;
+  public static getInstance(): IPMiddleware {
+    if (!IPMiddleware.instance) {
+      IPMiddleware.instance = new IPMiddleware();
+    }
+    return IPMiddleware.instance;
+  }
 
-//   ipRequestCount.set(ip, count + 1);
+  public static IpRquestCount: Map<string, number> = new Map<string, number>();
 
-//   if (count >= limit) {
-//     res.writeHead(429, { 'Content-Type': 'application/json' });
+  private static rateLimit = 1000; // max requests per minute
 
-//     return res.end(JSON.stringify({
-//       error: 'Rate limit exceeded',
-//       message: 'You have exceeded the number of allowed requests.',
-//     }));
-//   }
+  private static blockedIps: Set<string> = new Set<string>(
+    // ['::1',
+    //   '127.0.0.1',
+    // ]
+  );
 
-//   next();
-// };
+  public static IpMiddlewareHandler = (req: IncomingMessage, res: ServerResponse, next: () => void): ServerResponse | void | boolean => {
+    const ip = req.socket.remoteAddress;
+
+    if (!ip) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+
+      return res.write(JSON.stringify({
+        error: 'Bad Request',
+        message: 'IP address not found.',
+      }));
+    }
+
+    console.log(`Incoming request from IP: ${ip}`);
+
+    if (ip && this.blockedIps.has(ip)) {
+      res.writeHead(403, { 'Content-Type': 'text/plain' });
+
+      this.IpRquestCount.set(ip, (this.IpRquestCount.get(ip) || 0) + 1);
+
+      console.log(`Blocked IP ${ip} has made ${this.IpRquestCount.get(ip)} requests.`);
+
+      return res.write(JSON.stringify({
+        error: 'Access denied',
+        message: '\n You are not allowed to access this resource.',
+      }));
+    }
+
+    this.IpRquestCount.set(ip, (this.IpRquestCount.get(ip) || 0) + 1);
+
+    console.log(`IP ${ip} has made ${this.IpRquestCount.get(ip)} requests.`);
+
+    const requestCount = this.IpRquestCount.get(ip) ?? 0;
+
+    if (requestCount >= this.rateLimit) {
+      this.blockedIps.add(ip);
+      this.IpRquestCount.set(ip, 0);
+    }
+
+    next();
+  }
+
+  
 
 
-// i think this is not needed, bc why would we reset the count?
-const resetIpCount = (): void => {
-  ipRequestCount.clear();
-  console.log('IP request count reset');
-};
+  public static ResetIpCount = (): void => {
+    this.IpRquestCount.clear();
+    console.log('IP request count reset');
+  }
 
-export { IPMiddleware, blockIpsMiddleware, resetIpCount, blockedIps, ipRequestCount };
+}
+
+export { IPMiddleware };

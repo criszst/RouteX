@@ -73,13 +73,10 @@ app.get('/cookies', {aliases: '/getcookies'}, (req: IServerRequest, res: IServer
   res.json({'cookies': req.cookies || 'No cookies found'});
 });
 
-app.get('/test', {aliases: '/testmethod'}, (req: IServerRequest, res: IServerResponse) => {
-  res.test();
-  res.json({'test': 'test method called'});
-});
 
-app.get('/esp32', {aliases: '/esp'}, (req: IServerRequest, res: IServerResponse) => {
-  res.json({'message from esp32: -> ': req.body})
+app.get('/esp', {aliases: '/esp32'}, (req: IServerRequest, res: IServerResponse) => {
+   res.json({ received: req.body });
+  console.log('message from esp32: -> ', req.body);
 });
 
 
