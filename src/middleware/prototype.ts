@@ -4,6 +4,8 @@ import { Router } from '../router';
 import { IncomingMessage, ServerResponse } from 'http';
 
 import { Response } from '../server/response';
+import IServerRequest from '../interfaces/server/IServerRequest';
+import IServerResponse from '../interfaces/server/IServerResponse';
 
 const middleware = require('./init');
 
@@ -46,7 +48,7 @@ export const prototype = {
 
   /**
    * Checks if a setting is enabled.
-   * 
+   *
    * @param setting The setting to check.
    * @returns True if the setting is enabled; otherwise, false.
    */
@@ -66,7 +68,7 @@ export const prototype = {
    * @param next - A callback function to pass control to the next middleware.
    */
 
-  handle(req: IncomingMessage, res: ServerResponse | any, next: any): void {
+  handle(req: IServerRequest, res: IServerResponse | any, next: any): void {
     this.lazyrouter();
 
     Response.send(res);
@@ -93,7 +95,7 @@ export const prototype = {
     server.listen(port, callback)
   },
 
-  
+
   /**
    * Registers a route for the HTTP GET method.
    * @param path - The URL path to register the route on.

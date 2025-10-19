@@ -24,7 +24,7 @@ export class Layer {
     /**
      * Checks if the given path matches the layer's path or any of its aliases.
      * Logs the comparison process to the console.
-     * 
+     *
      * @param path - The path to be compared against the layer's path and aliases.
      * @emits console.log - Logs the comparison details including the current time, path, layer path, and aliases.
      * @returns True if the path matches the layer's path or any alias, false otherwise.
@@ -40,7 +40,6 @@ export class Layer {
         `\x1b[34m->\x1b[0m \x1b[90m[${hours}:${minutes}:${seconds}.${milliseconds}]\x1b[0m  \x1b[36mComparing path\x1b[0m \x1b[35m'${path}'\x1b[0m \x1b[36mwith layer\x1b[0m \x1b[35m'${this.path}'\x1b[0m \x1b[36m[aliases: ${this.alias.join(', ')}]\x1b[0m\n`
       );
 
-      // for example, this console.log will output:
       // -> [14:53:28.871]  Comparing path '/ip' with layer '/my/ip' [aliases: /my/ip, /ip]
 
     if (this.alias.length === 0) {
@@ -48,15 +47,15 @@ export class Layer {
     } else {
       return path === this.path || this.alias.includes(path);
     }
-    
+
       return path === this.path;
     }
-      
+
       handle_request(req: IncomingMessage, res: ServerResponse, next: Function): void {
-        
+
         console.log(`-> Executing handler for ${this.path}`);
         const fn = this.handle;
-      
+
         try {
           fn(req, res, next);
         } catch (err) {

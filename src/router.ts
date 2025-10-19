@@ -1,11 +1,14 @@
-import { IncomingMessage, ServerResponse } from 'http';
-import { Route } from './route';
-import { Layer } from './layer';
-import GetOptions from './interfaces/IProtoype';
-import ErrorsDetails from './errors/details';
-import { IPMiddleware } from './middleware/ip';
+import { IncomingMessage, ServerResponse } from "http";
+import { Route } from "./route";
+import { Layer } from "./layer";
+import GetOptions from "./interfaces/IProtoype";
+import ErrorsDetails from "./errors/details";
+import { IPMiddleware } from "./middleware/ip";
+import { app } from "./express";
+import IServerRequest from "./interfaces/server/IServerRequest";
+import IServerResponse from "./interfaces/server/IServerResponse";
 
-const parseUrl = require('parseurl');
+const parseUrl = require('parseurl')
 
 // routing system for handling HTTP requests
 // handles incoming requests and matching them against registered routes
@@ -23,28 +26,18 @@ export class Router {
     this.strict = options.strict || false;
   }
 
-
-  
   /**
    * Register a route for HTTP GET method
    * @param path - URL path which the route is registered to
    * @param handlers - functions that will be called when the route is matched
    */
-  public get(
-  path: GetOptions["path"],
-  options: { aliases?: string | string[] },
-  ...handlers: GetOptions["handlers"]
-): void {
-  const aliases = options.aliases
-    ? Array.isArray(options.aliases)
-      ? options.aliases
-      : [options.aliases]
-    : [];
 
-  // Register the route with the specified path and aliases
+  public get( path: GetOptions["path"], options: { aliases?: string | string[] }, ...handlers: GetOptions["handlers"]): void {
+
+  const aliases = options.aliases ? Array.isArray(options.aliases) ? options.aliases : [options.aliases] : [];
+
   this.registerRoute('get', path, { aliases: [path, ...aliases] }, ...handlers);
 }
-
 
 
   /**
@@ -52,14 +45,12 @@ export class Router {
    * @param path - URL path which the route is registered to
    * @param handlers - functions that will be called when the route is matched
    */
-  
+
   public post(path: GetOptions["path"], ...handlers: GetOptions["handlers"]): void {
     const route = this.route(path);
     route.post(...handlers);
-
   }
 
-  
   /**
    * Creates and registers a new route with the specified path.
    * @param path - The URL path for which the route should be registered.
@@ -77,69 +68,78 @@ export class Router {
     return route;
   }
 
+  private notFoundHandler!: (req: IServerRequest, res: IServerResponse) => void;
+
+  public setCustom404(handler: (req: IServerRequest, res: IServerResponse) => void): void {
+    this.notFoundHandler = handler;
+  }
+
   // example: /sendFile redirects to /send and its go on
- 
+
   /**
    * Handles an incoming request and calls the matched route's dispatch function
    * @param req - The incoming request
    * @param res - The response which will be sent back to the client
    * @param out - A function which will be called if no route matches the request. If not provided, a 404 response is sent.
    */
-  public handle(req: IncomingMessage, res: ServerResponse, out?: Function): void {
+  public handle(req: IServerRequest, res: IServerResponse, out?: Function): void {
     const stack = this.stack;
     let index = 0;
-  
+
     const next = () => {
       let layer;
-      let match;
+      let match: any;
       let route;
-  
+
       while (match !== true && index < stack.length) {
         const path = this.getPathName(req);
-  
+
         layer = stack[index++];
         match = this.matchLayer(layer, path);
         route = layer.route;
-  
+
         if (match !== true) {
           continue;
         }
-  
+
         if (!route) {
           continue;
         }
 
-        
         IPMiddleware.IpMiddlewareHandler(req, res, () => {});
         route.stack[0].handle_request(req, res, next);
       }
-  
+
       if (!match && out) {
         out();
       } else if (!match) {
-        res.statusCode = 404;
-        res.end('\n-> This route does not exist');
+
+        if (index >= stack.length && !match) {
+          if (this.notFoundHandler) {
+            this.notFoundHandler(req, res);
+
+          } else {
+            res.statusCode = 404;
+            res.end("Page is not found - 404");
+          }
+        }
       }
     };
-  
+
     next();
   }
 
-
-/**
- * Extracts the pathname from the incoming request object.
- * @param req - The incoming request object.
- * @returns The pathname extracted from the request URL, or undefined if an error occurs.
- */
+  /**
+   * Extracts the pathname from the incoming request object.
+   * @param req - The incoming request object.
+   * @returns The pathname extracted from the request URL, or undefined if an error occurs.
+   */
 
   private getPathName(req: any): any {
     try {
       return parseUrl(req).pathname;
-    }
-
-    catch (err) {
+    } catch (err) {
       if (err) {
-
         if (err instanceof Error) {
           return err.message;
         }
@@ -151,7 +151,6 @@ export class Router {
             received: req,
             })
         }
-
       } else {
 
         return ErrorsDetails.create(
@@ -159,13 +158,11 @@ export class Router {
           'Path is required', {
           expected: 'non-empty string',
           received: req,
-        })
-
+        });
       }
     }
   }
 
-  
   /**
    * Attempts to match the given path against the specified layer.
    * If the match is successful, returns true. If an error occurs, returns the error.
@@ -175,9 +172,7 @@ export class Router {
    */
   private matchLayer(layer: Layer, path: any): boolean {
     return layer.match(path);
-}
-
-
+  }
 
   /**
    * Mounts the given function or functions at the root of the router.
@@ -198,12 +193,12 @@ export class Router {
       layer.route = undefined;
       this.stack.push(layer);
     }
-  
+
     return this;
   }
 
   private registerRoute( method: 'get' | 'post', path: string,  options: { aliases: string | string[] }, ...handlers: GetOptions["handlers"]): void {
-    
+
     const aliases = options.aliases ? Array.isArray(options.aliases) ? options.aliases : [options.aliases] : [];
 
     const route = this.route(path);
@@ -212,12 +207,12 @@ export class Router {
       aliases.forEach(alias => {
         route.get(alias, ...handlers);
       });
-    } 
-    
-    else if (method === 'post') route.post(...handlers); 
-    
+    }
+
+    else if (method === 'post') route.post(...handlers);
+
     else  throw new Error(`Unsupported method: ${method}`);
-    
+
 
     let normalizedPath = path;
 

@@ -1,7 +1,9 @@
 import { Router } from "../router";
-import http from "http";
+import { IncomingMessage, ServerResponse } from 'http';
 
 import GetOptions from '../interfaces/IProtoype'
+import IServerResponse from "./server/IServerResponse";
+import IServerRequest from "./server/IServerRequest";
 
 
 /**
@@ -11,17 +13,17 @@ interface App {
     /**
      * The HTTP request object.
      */
-    request: http.IncomingMessage;
+    request: IncomingMessage;
 
     /**
      * The HTTP response object.
      */
-    response: http.ServerResponse;
+    response: ServerResponse;
 
     /**
      * The router instance used for handling routes.
      */
-    _router: Router | null;
+    _router: Router;
 
     /**
      * Function signature for handling requests.
@@ -29,8 +31,8 @@ interface App {
      * @param res - The HTTP response object.
      * @param next - A callback function to pass control to the next middleware.
      */
-    (req: http.IncomingMessage, 
-     res: http.ServerResponse, 
+    (req: IncomingMessage,
+     res: ServerResponse,
      next: (err?: Error) => void
     ): void
 
@@ -46,8 +48,8 @@ interface App {
      * @param next - A callback function to pass control to the next middleware.
      */
     handle(alias: string,
-           req: http.IncomingMessage, 
-           res: http.ServerResponse, 
+           req: IncomingMessage,
+           res: ServerResponse,
            next: (err?: Error) => void
         ): void
 
@@ -80,7 +82,10 @@ interface App {
     /**
      * The router instance used for handling routes.
      */
-    router: Router
+     router: Router
+
+     setCustom404(handler: (req: IServerRequest, res: IServerResponse) => void): void;
+
 }
 
 export default App;
