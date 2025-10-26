@@ -19,7 +19,7 @@ app.get('/', {aliases: '/main'}, (req: IServerRequest, res: IServerResponse, nex
 app.get('/', {aliases: '/main'}, (req: IServerRequest, res: IServerResponse) => {
   res.json({'hello': 'world'})
   console.log(req.method)
-});
+})
 
 app.post('/post', (req: IServerRequest, res: IServerResponse) => {
   res.writeHead(200)
@@ -87,6 +87,14 @@ app.get('/esp', {aliases: '/esp32'}, (req: IServerRequest, res: IServerResponse)
    res.json({ received: req.body });
   console.log('message from esp32: -> ', req.body);
 });
+
+
+app.showLogs = () => {
+  console.log("Logs:")
+  console.log("Request:", app.request)
+  console.log("Response:", app.response)
+}
+
 
 
 app.setCustom404((req, res) => {

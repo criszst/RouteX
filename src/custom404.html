@@ -4,9 +4,11 @@
     <title>404 - Page not found</title>
 </head>
 <body style="background-color: black;">
-    <h1 style="color: white">404 - Page not found</h1>
-    <p id="errorMsg" style="color: white"></p>
+    <h1 style="color: white; text-align: center; padding-top: 20%;">404 - Page not found</h1>
+    <p id="errorMsg" style="color: white; text-align: center;"></p>
+
     <script>
+
     const displayError = (message) => {
       const errorMsg = document.getElementById('errorMsg');
       errorMsg.textContent = message;
@@ -15,6 +17,7 @@
     const getPath = window.location.pathname;
 
     displayError(`" ${getPath} "  was not found`)
+
     </script>
 </body>
 </html>

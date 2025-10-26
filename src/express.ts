@@ -4,12 +4,10 @@ import { prototype } from "./middleware/prototype"
 import { merge } from "./libs/merge"
 
 import { IncomingMessage, ServerResponse } from "http"
-import { Response } from "./server/response"
 
 
 import IServerResponse from "./interfaces/server/IServerResponse"
 import IServerRequest from "./interfaces/server/IServerRequest"
-import Router from "./router"
 
 function createApp(): App {
   const app = ((alias: string, req: IServerRequest, res: IServerResponse, next: any): void => {
@@ -49,6 +47,10 @@ function createApp(): App {
 
   app.request = Object.create(req as IServerRequest, appReference.prototype);
   app.response = Object.create(res as IServerResponse, appReference.prototype);
+
+  app.showLogs = (options: {tiny?: boolean, big?: boolean, custom?: boolean}) => {
+    app._router.showLogs(options)
+  }
 
   app.setCustom404 = (handler) => {
     app.lazyrouter();

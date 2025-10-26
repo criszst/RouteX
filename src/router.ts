@@ -14,6 +14,10 @@ const parseUrl = require('parseurl')
 // handles incoming requests and matching them against registered routes
 
 export class Router {
+  showLogs(options: { tiny?: boolean; big?: boolean; custom?: boolean; }) {
+      throw new Error("Method not implemented.");
+  }
+
   stack: Layer[];
   params: Record<string, unknown>;
   caseSensitive: boolean;
@@ -24,6 +28,10 @@ export class Router {
     this.stack = [];
     this.caseSensitive = options.caseSensitive || false;
     this.strict = options.strict || false;
+  }
+
+  public static showLogsHandler(options: { tiny?: boolean; big?: boolean; custom?: boolean; }) {
+      throw new Error("Method not implemented.");
   }
 
   /**
