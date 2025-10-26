@@ -12,7 +12,7 @@ A lightweight Express-like framework that I built for fun. While I won’t be im
 - [x] **Aliases to Router** -> Aliases to some routes pages, to increase readability and ease of use.
 - [x] **IP Middleware** → Middleware with IP blocking and rate limiting features.  
 - [ ] **More built-in middlewares** → Add useful built-in middleware options for developers.  
-- [ ] **404 Handler** → Provide a default or customizable response for unmatched routes.  
+- [x] **404 Handler** → Provide a default or customizable response for unmatched routes.  
 - [ ] **Simple Logger Middleware** → Log HTTP method, path, and timestamp for each request.  
 - [ ] **Additional tests** → Improve test coverage for stability and reliability.
 
