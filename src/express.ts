@@ -48,9 +48,10 @@ function createApp(): App {
   app.request = Object.create(req as IServerRequest, appReference.prototype);
   app.response = Object.create(res as IServerResponse, appReference.prototype);
 
-  app.showLogs = (options: {tiny?: boolean, big?: boolean, custom?: boolean}) => {
-    app._router.showLogs(options)
-  }
+  // TODO: Implement showLogs method
+  // app.showLogs = (options: {tiny?: boolean, big?: boolean, custom?: boolean}) => {
+  //   app._router.showLogs(options)
+  // }
 
   app.setCustom404 = (handler) => {
     app.lazyrouter();

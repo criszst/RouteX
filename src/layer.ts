@@ -36,6 +36,12 @@ export class Layer {
       const minutes = now.getMinutes().toString().padStart(2, '0');
       const seconds = now.getSeconds().toString().padStart(2, '0');
       const milliseconds = now.getMilliseconds().toString().padStart(3, '0');
+      
+      app.showLogs({
+        tiny: true,
+        big: false,
+        custom: false
+      });
 
       console.log(
         `\x1b[34m->\x1b[0m \x1b[90m[${hours}:${minutes}:${seconds}.${milliseconds}]\x1b[0m  \x1b[36mComparing path\x1b[0m \x1b[35m'${path}'\x1b[0m \x1b[36mwith layer\x1b[0m \x1b[35m'${this.path}'\x1b[0m \x1b[36m[aliases: ${this.alias.join(', ')}]\x1b[0m\n`

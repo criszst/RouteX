@@ -14,14 +14,14 @@ const parseUrl = require('parseurl')
 // handles incoming requests and matching them against registered routes
 
 export class Router {
-  showLogs(options: { tiny?: boolean; big?: boolean; custom?: boolean; }) {
-      throw new Error("Method not implemented.");
-  }
-
   stack: Layer[];
   params: Record<string, unknown>;
   caseSensitive: boolean;
   strict: boolean;
+
+  // showLogs(options: { tiny?: boolean; big?: boolean; custom?: boolean; }) {
+  //     throw new Error("Method not implemented.");
+  // }
 
   constructor(options: { caseSensitive?: boolean; strict?: boolean } = {}) {
     this.params = {};

@@ -89,11 +89,11 @@ app.get('/esp', {aliases: '/esp32'}, (req: IServerRequest, res: IServerResponse)
 });
 
 
-app.showLogs = () => {
-  console.log("Logs:")
-  console.log("Request:", app.request)
-  console.log("Response:", app.response)
-}
+// app.showLogs = () => {
+//   console.log("Logs:")
+//   console.log("Request:", app.request)
+//   console.log("Response:", app.response)
+// }
 
 
 
