@@ -10,6 +10,13 @@ import IServerRequest from "./server/IServerRequest";
  * Interface representing an application with request handling capabilities.
  */
 interface App {
+
+    /**
+    * Mounts the specified middleware function or functions at the specified path.
+    */
+      use(path?: string, ...handlers: Function[]): void
+
+
     /**
      * The HTTP request object.
      */
@@ -91,6 +98,7 @@ interface App {
     * @param handler - The handler function to be invoked when a 404 error occurs.
     */
      setCustom404(handler: (req: IServerRequest, res: IServerResponse) => void): void;
+
 
 }
 

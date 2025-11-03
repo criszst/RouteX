@@ -1,6 +1,7 @@
 'use strict';
 
-import fs, { ReadStream, promises as fsPromises } from 'fs'
+import fs from 'fs';
+
 const mime = require('mime');
 
 import { basename, join } from 'path';
@@ -80,7 +81,7 @@ export class Response {
    * Adds a redirect method to the response object that performs a 302 redirect.
    *
    * @param res - The response object to which the redirect method is added.
-   * 
+   *
   */
   public static redirect(res: ExtendedServerResponse): void {
     res.redirect = function (url: string): void {

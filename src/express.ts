@@ -58,6 +58,12 @@ function createApp(): App {
     app.router.setCustom404(handler);
   };
 
+  app.use = (path: string, ...handlers: Function[]): void => {
+    app.lazyrouter();
+
+    const newHandler = Object.create(handlers)
+    app.router.use(newHandler);
+  };
 
   app.init()
 
