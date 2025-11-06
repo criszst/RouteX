@@ -1,6 +1,6 @@
 import GetOptions from '../interfaces/IProtoype'
 
-import { Router } from '../router';
+import { Router } from '../core/router';
 import { IncomingMessage, ServerResponse } from 'http';
 
 import { Response } from '../server/response';

@@ -1,12 +1,12 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { Route } from "./route";
 import { Layer } from "./layer";
-import GetOptions from "./interfaces/IProtoype";
-import ErrorsDetails from "./errors/details";
-import { IPMiddleware } from "./middleware/ip";
-import { app } from "./express";
-import IServerRequest from "./interfaces/server/IServerRequest";
-import IServerResponse from "./interfaces/server/IServerResponse";
+import GetOptions from "../interfaces/IProtoype";
+import ErrorsDetails from "../errors/details";
+import { IPMiddleware } from "../middleware/ip";
+import { app } from "../express";
+import IServerRequest from "../interfaces/server/IServerRequest";
+import IServerResponse from "../interfaces/server/IServerResponse";
 
 const parseUrl = require('parseurl')
 

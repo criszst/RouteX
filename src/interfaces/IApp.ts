@@ -1,4 +1,4 @@
-import { Router } from "../router";
+import { Router } from "../core/router";
 import { IncomingMessage, ServerResponse } from 'http';
 
 import GetOptions from '../interfaces/IProtoype'

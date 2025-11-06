@@ -1,6 +1,6 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { Layer } from "./layer";
-import { flatten } from "./libs/flatten";
+import { flatten } from "../libs/flatten";
 
 export class Route {
   path: string;

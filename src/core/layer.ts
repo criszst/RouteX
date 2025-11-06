@@ -1,7 +1,5 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import { Route } from './route';
-import { IPMiddleware } from './middleware/ip';
-import { app } from './express';
 
 export class Layer {
     handle: Function;

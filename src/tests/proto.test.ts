@@ -1,7 +1,7 @@
 import { describe, expect, it, beforeEach } from '@jest/globals';
 import { IncomingMessage } from 'http';
 import { prototype } from '../middleware/prototype';
-import Router from '../router';
+import Router from '../core/router';
 
 const proto = prototype;
 

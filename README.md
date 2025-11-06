@@ -1,94 +1,138 @@
+Perfeito — a descrição **“Middleware to automatically reload the page when changes are made”** está **correta**, mas pode ser levemente aprimorada para soar mais técnica e natural em inglês. Por exemplo:
+
+> **Hot Module Reload** → Middleware that automatically refreshes the client when changes are detected in the source code.
+
+Agora segue o **README atualizado e aprimorado**, com uma linguagem mais fluida, profissional e humana — mas mantendo o tom leve e entusiástico do projeto 👇
+
+---
+
 # RouteX
 
-A lightweight Express-like framework that I built for fun. While I won’t be implementing all the features of Express, I’ll be adding the essential ones to keep the project clean and functional.  
-<br/>
-
-## Checklist  
-
-- [x] **Basic app structure** → Includes core methods like `send`, `post`, `res`, `req`, and `next`.  
-- [x] **Reduced dependencies** → Recreated essential libraries to improve security and minimize external code.  
-- [x] **TypeScript interfaces** → Used to ensure clean and maintainable code.  
-- [x] **HTML file sending** → Function to send an HTML file directly to the client. 
-- [x] **Aliases to Router** -> Aliases to some routes pages, to increase readability and ease of use.
-- [x] **IP Middleware** → Middleware with IP blocking and rate limiting features.  
-- [ ] **More built-in middlewares** → Add useful built-in middleware options for developers.  
-- [x] **404 Handler** → Provide a default or customizable response for unmatched routes.  
-- [ ] **Simple Logger Middleware** → Log HTTP method, path, and timestamp for each request.  
-- [ ] **Additional tests** → Improve test coverage for stability and reliability.
+A lightweight, Express-inspired framework I built just for fun — designed to stay clean, minimal, and fast.
+While it doesn’t aim to replicate every Express feature, it includes the **core essentials** that make web development intuitive and enjoyable.
 
 <br/>
 
-## Features  
+## Checklist
 
-- **`send(data)`** → Sends an object or text directly to the client.  
-- **`json(data)`** → Returns a JSON response.  
-- **`download(filePath)`** → Sends a file to be downloaded by the client.  
-- **`redirect(url)`** → Redirects the client to a specific URL (public domain or local project file).  
-- **`sendFile(filePath)`** → Sends the content of a file to the client.  
+* [x] **Basic app structure** → Includes core methods like `send`, `post`, `res`, `req`, and `next`.
+* [x] **Reduced dependencies** → Recreated essential modules from scratch to improve security and reduce external code.
+* [x] **TypeScript interfaces** → Ensures cleaner, more maintainable, and strongly-typed code.
+* [x] **HTML file sending** → Easily serve static HTML files with `sendFile()`.
+* [x] **Route aliases** → Define aliases for routes to improve readability and ease of use.
+* [x] **IP Middleware** → Built-in middleware for IP blocking and simple rate limiting.
+* [x] **Hot Module Reload** → Middleware that automatically refreshes the client when changes are detected in the source code.
+* [x] **404 Handler** → Customizable default response for unmatched routes.
+* [ ] **Simple Logger Middleware** → Log HTTP method, path, and timestamp for each request.
+* [ ] **Additional tests** → Increase test coverage for improved stability and reliability.
 
-</br>
+<br/>
 
-## Usage  
+## Project Structure
 
-Some quick examples of how to use it:  
+Here’s how RouteX is organized:
 
-```ts
-response.send("Hello, client!"); // Sends a text response  
-response.json({ hello: "world" }); // Sends a JSON response  
-response.download("./download.test.txt"); // Forces a file download  
-response.redirect("https://example.com"); // Redirects the user  
-response.sendFile("./index.html"); // Sends the content of a file  
+```
+RouteX/
+├── src/
+│   ├── routes/          # Define your routes here
+│   ├── middlewares/     # Custom middlewares (IP blocker, HMR, etc.)
+│   ├── core/            #  Core framework logic, like router and layer controller for each route
+│   ├── interfaces/      # TypeScript interfaces for requests and responses
+│   ├── libs/            # Reimplemented core utilities to reduce third-party dependencies
+│   ├── errors/          # Centralized error handling and response helpers (not work corrected yet)
+│   └── index.ts         # Entry point of the application
+├── dist/                # Compiled JavaScript output
+├── package.json
+└── tsconfig.json
 ```
 
-See more example of usage at <a href="src/index.ts">index.ts</a>
+* Routes are located in **`/src/routes`** — that’s where you define your endpoints.
+* Core logic (like `Router`, `Server`, and `Response` helpers) lives under **`/src/core`**.
+* Middlewares like IP blocking can be found in **`/src/middlewares`**.
 
-</br>
+<br/>
 
-## Installation  
+## Features
 
-First, clone the repository:  
+* **`send(data)`** → Sends plain text or an object directly to the client.
+* **`json(data)`** → Returns a JSON response.
+* **`download(filePath)`** → Forces the client to download a file.
+* **`redirect(url)`** → Redirects the user to another URL or local file.
+* **`sendFile(filePath)`** → Serves a file’s contents directly to the client.
 
-```sh
+<br/>
+
+## Usage Example
+
+```ts
+response.send("Hello, client!"); // Sends a text response
+response.json({ hello: "world" }); // Sends a JSON response
+response.download("./download.test.txt"); // Forces a file download
+response.redirect("https://example.com"); // Redirects the client
+response.sendFile("./index.html"); // Sends an HTML file to the client
+```
+
+➡️ Check out more examples in [`src/index.ts`](src/index.ts)
+
+<br/>
+
+## Getting Started
+
+Clone the repository:
+
+```bash
 git clone https://github.com/criszst/RouteX.git
 ```
 
-Navigate into the project directory:  
+Move into the project directory:
 
-```sh
+```bash
 cd RouteX
 ```
 
-Then, install dependencies:  
+Install dependencies:
 
-```sh
+```bash
 npm install
 ```
 
-If you want to run tests (optional but recommended):  
+(Optional) Run the test suite:
 
-```sh
+```bash
 npm run test
 ```
 
-Since Node.js can't run TypeScript files directly, compile the project:  
+Since Node.js doesn’t run TypeScript directly, compile the project first:
 
-```sh
+```bash
 npm run build
 ```
 
-Finally, start the server:  
+Then start the server:
 
-```sh
+```bash
 npm run start
 ```
 
 <br/>
 
-## Running the Server  
+## Running the Server
 
-The server runs on port `3000`. Once it's up, visit:  
+Once started, the server runs on port **`3000`** by default.
+Open your browser and visit:
 
-[http://localhost:3000](http://localhost:3000)  
+👉 [http://localhost:3000](http://localhost:3000)
 
-You should see the message:  
-`{"hello":"world"}`  
+You should see the response:
+
+```json
+{"hello": "world"}
+```
+
+<br/>
+
+## 💡 Final Notes
+
+RouteX isn’t meant to replace Express — it’s a playground to explore how web frameworks work under the hood.
+It’s a simple, educational project that grows as I add new features and refine its core design.
