@@ -121,10 +121,3 @@ You should see the response:
 ```json
 {"hello": "world"}
 ```
-
-<br/>
-
-## 💡 Final Notes
-
-RouteX isn’t meant to replace Express — it’s a playground to explore how web frameworks work under the hood.
-It’s a simple, educational project that grows as I add new features and refine its core design.
