@@ -5,8 +5,11 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
+    "vercel-build": "npm run build",
+
     "start": "npm run build && cross-env NODE_ENV=production node dist/index.js",
     "dev": "cross-env NODE_ENV=development ts-node src/index.ts",
+
     "tests": "jest"
   },
   "devDependencies": {
