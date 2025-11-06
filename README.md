@@ -1,122 +1,109 @@
 # RouteX
 
-A lightweight, Express-inspired framework I built just for fun — designed to stay clean, minimal, and fast.
-While it doesn’t aim to replicate every Express feature, it includes the **core essentials** that make web development intuitive and enjoyable.
 
-<br/>
+![Node](https://img.shields.io/badge/node-%3E=18-green)
+![TypeScript](https://img.shields.io/badge/types-checked-blue)
+![License](https://img.shields.io/github/license/criszst/RouteX)
+
+
+A lightweight, Express-inspired framework built for fun — clean, minimal, and fast.
+It doesn’t aim to replicate every Express feature, only the **core essentials** that make web development intuitive.
+
+---
+
+## Table of Contents
+
+* [Checklist](#checklist)
+* [Project Structure](#project-structure)
+* [Features](#features)
+* [Usage Example](#usage-example)
+* [Getting Started](#getting-started)
+* [Running the Server](#running-the-server)
+
+---
 
 ## Checklist
 
-* [x] **Basic app structure** → Includes core methods like `send`, `post`, `res`, `req`, and `next`.
-* [x] **Reduced dependencies** → Recreated essential modules from scratch to improve security and reduce external code.
-* [x] **TypeScript interfaces** → Ensures cleaner, more maintainable, and strongly-typed code.
-* [x] **HTML file sending** → Easily serve static HTML files with `sendFile()`.
-* [x] **Route aliases** → Define aliases for routes to improve readability and ease of use.
-* [x] **IP Middleware** → Built-in middleware for IP blocking and simple rate limiting.
-* [x] **Hot Module Reload** → Middleware that automatically refreshes the client when changes are detected in the source code.
-* [x] **404 Handler** → Customizable default response for unmatched routes.
-* [ ] **Simple Logger Middleware** → Log HTTP method, path, and timestamp for each request.
-* [ ] **Additional tests** → Increase test coverage for improved stability and reliability.
+* [x] Basic app structure (`send`, `post`, `res`, `req`, `next`)
+* [x] Reduced dependencies — core libs rebuilt from scratch
+* [x] Strong TypeScript interfaces
+* [x] Static file support (`sendFile`)
+* [x] Route aliases for cleaner code
+* [x] IP middleware for blocking & rate-limit
+* [x] Hot Module Reload for dev productivity
+* [x] 404 handler for unmatched routes
+* [ ] Simple logger middleware
+* [ ] Extra tests for better coverage
 
-<br/>
+---
 
 ## Project Structure
-
-Here’s how RouteX is organized:
 
 ```
 RouteX/
 ├── src/
-│   ├── routes/          # Define your routes here
-│   ├── middlewares/     # Custom middlewares (IP blocker, HMR, etc.)
-│   ├── core/            #  Core framework logic, like router and layer controller for each route
-│   ├── interfaces/      # TypeScript interfaces for requests and responses
-│   ├── libs/            # Reimplemented core utilities to reduce third-party dependencies
-│   ├── errors/          # Centralized error handling and response helpers (not work corrected yet)
-│   └── index.ts         # Entry point of the application
-├── dist/                # Compiled JavaScript output
+│   ├── routes/       # Define routes here
+│   ├── middlewares/  # IP blocker, HMR, etc.
+│   ├── core/         # Router, server, and layer controller
+│   ├── interfaces/   # TypeScript types for requests/responses
+│   ├── libs/         # Internal utilities (no external deps)
+│   ├── errors/       # Centralized error handling (WIP)
+│   └── index.ts      # Entry point
+├── dist/             # Compiled output
 ├── package.json
 └── tsconfig.json
 ```
 
-* Routes are located in **`/src/routes`** — that’s where you define your endpoints.
-* Core logic (like `Router`, `Server`, and `Response` helpers) lives under **`/src/core`**.
-* Middlewares like IP blocking can be found in **`/src/middlewares`**.
-
-<br/>
+---
 
 ## Features
 
-* **`send(data)`** → Sends plain text or an object directly to the client.
-* **`json(data)`** → Returns a JSON response.
-* **`download(filePath)`** → Forces the client to download a file.
-* **`redirect(url)`** → Redirects the user to another URL or local file.
-* **`sendFile(filePath)`** → Serves a file’s contents directly to the client.
+* `send(data)` → Sends plain text or objects
+* `json(data)` → Returns JSON response
+* `download(path)` → Forces file download
+* `redirect(url)` → Redirects client
+* `sendFile(path)` → Serves static files
 
-<br/>
+---
 
 ## Usage Example
 
 ```ts
-response.send("Hello, client!"); // Sends a text response
-response.json({ hello: "world" }); // Sends a JSON response
-response.download("./download.test.txt"); // Forces a file download
-response.redirect("https://example.com"); // Redirects the client
-response.sendFile("./index.html"); // Sends an HTML file to the client
+response.send("Hello, client!");
+response.json({ hello: "world" });
+response.download("./file.txt");
+response.redirect("https://example.com");
+response.sendFile("./index.html");
 ```
 
-➡️ Check out more examples in [`src/index.ts`](src/index.ts)
+> 🔗 See more in [`src/index.ts`](src/index.ts)
 
-<br/>
+---
 
 ## Getting Started
 
-Clone the repository:
-
 ```bash
 git clone https://github.com/criszst/RouteX.git
-```
-
-Move into the project directory:
-
-```bash
 cd RouteX
-```
-
-Install dependencies:
-
-```bash
 npm install
+npm run build
+npm run start
 ```
 
-(Optional) Run the test suite:
+Optional:
 
 ```bash
 npm run test
 ```
 
-Since Node.js doesn’t run TypeScript directly, compile the project first:
-
-```bash
-npm run build
-```
-
-Then start the server:
-
-```bash
-npm run start
-```
-
-<br/>
+---
 
 ## Running the Server
 
-Once started, the server runs on port **`3000`** by default.
-Open your browser and visit:
-
+By default, the server runs on **port 3000**:
 👉 [http://localhost:3000](http://localhost:3000)
 
-You should see the response:
+Expected response:
 
 ```json
 {"hello": "world"}
