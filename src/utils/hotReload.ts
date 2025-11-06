@@ -7,7 +7,7 @@ export function setupHotReload(loadRoutes: () => void) {
   const baseDir = isDev ? path.join(process.cwd(), "src") : path.join(process.cwd(), "dist");
 
   const watchDirs = [
-    path.join(baseDir, "routes"),
+    path.join(baseDir, "/index.ts"),
   ];
 
   const watcher = chokidar.watch(watchDirs, {

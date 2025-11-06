@@ -5,8 +5,9 @@ function loadRoutes() {
   const isDev = fs.existsSync(path.join(process.cwd(), "src"));
   const baseDir = isDev ? path.join(process.cwd(), "src") : path.join(process.cwd(), "dist");
 
-  const routesDir = path.join(baseDir, "routes");
+  const routesDir = path.join(baseDir, "index");
   const files = fs.readdirSync(routesDir);
+
 
   // TODO: implement hot reloading for other extension file like html and so on
   for (const file of files) {
