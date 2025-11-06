@@ -1,11 +1,3 @@
-Perfeito — a descrição **“Middleware to automatically reload the page when changes are made”** está **correta**, mas pode ser levemente aprimorada para soar mais técnica e natural em inglês. Por exemplo:
-
-> **Hot Module Reload** → Middleware that automatically refreshes the client when changes are detected in the source code.
-
-Agora segue o **README atualizado e aprimorado**, com uma linguagem mais fluida, profissional e humana — mas mantendo o tom leve e entusiástico do projeto 👇
-
----
-
 # RouteX
 
 A lightweight, Express-inspired framework I built just for fun — designed to stay clean, minimal, and fast.
