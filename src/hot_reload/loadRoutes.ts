@@ -2,24 +2,24 @@ import fs from 'fs';
 import path from 'path';
 
 
-const loadRoutes = () => {
-  const isDev = process.env.NODE_ENV === 'development';
+const loadRoutes = (): void => {
+  const isDev: boolean = process.env.NODE_ENV === 'development';
 
-  const baseDir = path.join(process.cwd(), isDev ? 'src' : 'dist', 'routes');
+  const baseDir: string = path.join(process.cwd(), isDev ? 'src' : 'dist', 'routes');
 
   if (!fs.existsSync(baseDir)) {
     console.warn(`Routes directory not found at ${baseDir}`);
     return;
   }
 
-  const files = fs.readdirSync(baseDir)
+  const files: string[] = fs.readdirSync(baseDir)
     .filter(file => file.endsWith('.ts') || file.endsWith('.js'));
 
   for (const file of files) {
-    const resolvePath = path.resolve(baseDir, file);
+    const resolvePath: string = path.resolve(baseDir, file);
 
 
-    const route = require(resolvePath);
+    const route: NodeJS.Require | any = require(resolvePath);
     if (typeof route.default === 'function') {
       route.default();
     }
