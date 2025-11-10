@@ -9,7 +9,7 @@ export class Request {
   }
 
   init(): void {
-    this.req.socket.setTimeout(0); 
+    this.req.socket.setTimeout(0);
   }
 
 
@@ -20,7 +20,7 @@ export class Request {
    */
   public get method(): IncomingMessage["method"] {
     const override = this.req.headers["x-http-method-override"];
-    
+
     if (!this.req.method) {
       return "GET";
     }
@@ -35,7 +35,7 @@ export class Request {
   /**
    * Returns the URL of the request. If the request URL is not specified,
    * the root URL "/" is returned.
-   * @returns The URL of the request as a string.
+   * @returns string
    */
   public get url(): string {
     return this.req.url || "/";
@@ -43,14 +43,17 @@ export class Request {
 
   /**
    * Returns the headers of the request as an object.
-   * @returns The headers of the request as an object.
-   */  
-
+   *
+   */
   public get headers(): IncomingMessage["headers"] {
     return this.req.headers;
   }
 
-  public get cookies(): IncomingMessage["headers"]["cookie"] | String {
+  /**
+   * Returns the cookies of the request as an object.
+   * @returns String
+   */
+  public get cookies(): IncomingMessage["headers"]["cookie"] | string {
     return this.req.headers.cookie;
   }
 

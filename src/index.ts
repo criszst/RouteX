@@ -1,12 +1,12 @@
 import { app } from "./express";
 
-import { setupHotReload } from "./hot_reload/hotReload";
-import loadRoutes from "./hot_reload/loadRoutes";
+import RouteManager from "./middleware/RouteManager";
 
 const port = 3000;
 
-loadRoutes();
-setupHotReload(loadRoutes);
+const routeManager = new RouteManager(app);
+
+routeManager.start();
 
 // main routes are located on /routes
 // bc it's a convention to have routes in a separate file

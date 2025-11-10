@@ -9,7 +9,7 @@ export default function mainRoutes() {
   });
 
   app.get('/', {aliases: '/main'}, (req: IServerRequest, res: IServerResponse) => {
-    res.json({'hello': 'world teste 12222'})
+    res.json({'hello': 'world teste 2'})
 
     console.log(req.method)
   });
