@@ -27,22 +27,39 @@ export class Response {
     Response.sendFile(res);
   }
 
+
+  /**
+   * Send a response.
+   *
+   * @param body - The body to send.
+   *
+   */
+
   public static send(res: ExtendedServerResponse): void {
     res.send = function (body: object | string) {
       if (typeof body === 'object') {
         this.setHeader('Access-Control-Allow-Methods', 'POST');
         this.setHeader('Content-Type', 'application/json');
-        this.end(JSON.stringify(body), 'utf-8');
+        this.write(JSON.stringify(body), 'utf-8');
+        this.end();
       } else {
         this.setHeader('Content-Type', 'text/plain');
-        this.end(body, 'utf-8');
+        this.write(JSON.stringify(body), 'utf-8');
+        this.end();
       }
     };
   }
 
+
+  /**
+   * Send a JSON response.
+   *
+   * @param body - The JSON body to send.
+   *
+   */
   public static json(res: ExtendedServerResponse): void {
     res.json = function (body: Object | String) {
-      // this.setHeader('Access-Control-Allow-Methods', 'GET');
+      this.setHeader('Access-Control-Allow-Methods', 'GET');
       this.setHeader('Content-Type', 'application/json');
 
       if (!body) return ErrorsDetails.create(
@@ -57,6 +74,12 @@ export class Response {
   }
 
 
+  /**
+   * Download a file from the server.
+   *
+   * @param path - The path of the file to download.
+   *
+   */
 
   public static download(res: ExtendedServerResponse): void {
     res.download = function (path: string) {
@@ -69,7 +92,8 @@ export class Response {
         if (err) {
           this.statusCode = 404;
           this.setHeader('Content-Type', 'application/json');
-          return this.end(JSON.stringify({ error: err.message }), 'utf-8');
+          this.write(JSON.stringify({ error: err.message }), 'utf-8');
+          this.end();
         }
 
       });
@@ -128,7 +152,7 @@ export class Response {
 
       return new Promise(async (resolve: () => void, reject: (err: Error) => void) => {
 
-        const filePath = options?.root ? join(options.root, path) : path
+        let filePath = options?.root ? require.resolve(join(options.root, path)) : path
 
         if (!path)
           throw ErrorsDetails.create(
@@ -138,13 +162,12 @@ export class Response {
             received: path,
           });
 
-        if (!fs.existsSync(filePath))
-          throw ErrorsDetails.create(
-            'Path Error',
-            'This path does not exist', {
-            expected: 'a valid path',
-            received: filePath,
-          });
+        if (!fs.existsSync(filePath)) {
+          res.statusCode = 404;
+          res.write(`The path ${filePath} does not exist or is not accessible`);
+          res.end()
+          return;
+        }
 
         if (callback && typeof callback !== 'function') {
           throw ErrorsDetails.create(
@@ -187,7 +210,7 @@ export class Response {
 
             reject(err)
 
-            return this.end(JSON.stringify({ error: err.message }), 'utf-8');
+            return this.write(JSON.stringify({ error: err.message }), 'utf-8');
           }
         })
       })

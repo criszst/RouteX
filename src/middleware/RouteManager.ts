@@ -1,5 +1,9 @@
-import chokidar, { FSWatcher } from "chokidar";
 import App from "../interfaces/IApp";
+
+import IServerRequest from "../interfaces/server/IServerRequest";
+import IServerResponse from "../interfaces/server/IServerResponse";
+
+import chokidar, { FSWatcher } from "chokidar";
 import path from "path";
 
 import fs from 'fs';
@@ -34,18 +38,20 @@ class RouteManager {
     console.log(`[Router] Loaded ${files.length} route(s) from ${this.baseDir}`)
   }
 
-  public clearCache(filePath: string) {
+  // TODO: turn ClearCache as a Promise to manipulate erros when reloading
+  public clearCache(filePath: string): void{
     try {
       delete require.cache[require.resolve(filePath)]
       console.log(`[Hot Reload] Cache cleared for ${filePath}`)
+
     } catch (error) {
-      console.error(`Failed to clear cache for ${filePath}: ${error}`);
+      console.error(`Failed to clear cache for ${filePath}:\n ${error}\n`);
     }
   }
 
   public setupHotReload() {
     if (!this.baseDir) {
-      console.warn(`Hot reload cannot be set up because base directory is not set.`);
+      console.warn(`Hot reload cannot be  set up because base directory is not set.`);
       return;
     }
 
@@ -65,6 +71,7 @@ class RouteManager {
 
       console.log(`[Hot Reload] Change detected in: ${formattedPath}`);
 
+      // TODO: remove theses two try
       try {
         this.clearCache(filePath)
       } catch {
@@ -73,7 +80,6 @@ class RouteManager {
 
       try {
         this.clearCache(fullPath)
-        this.loadRoutes();
         console.log("[HMR] Routes reloaded successfully!");
       } catch (error) {
         console.error(`[HMR] Error reloading routes: ${error}`);
