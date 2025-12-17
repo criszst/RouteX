@@ -60,6 +60,16 @@ At runtime, RouteX **does not load files, parse routes, or perform dynamic impor
 • Closer to how modern frameworks (Next.js, Fastify internals) work
 
 ### Request lifecycle
+```
+Build / Startup
+├── Load route files
+├── Compile route tree
+└── Create route matcher
+
+Runtime (per request)
+├── Match URL & method
+└── Execute handler + middleware pipeline
+```
 
 
 
@@ -120,8 +130,6 @@ src/
 │   └── mime.mock.ts
 │    └──response.mock.ts
 │
-
-
 ```
 
 ---
@@ -146,7 +154,7 @@ response.redirect("https://example.com");
 response.sendFile("./index.html");
 ```
 
-> 🔗 See more in [`src/index.ts`](src/index.ts)
+> 🔗 See more in [`src/examples/routes/index.ts`](src/examples/routes/main.ts)
 
 ---
 
