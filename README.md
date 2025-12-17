@@ -1,7 +1,7 @@
 # RouteX
 
 
-![Node](https://img.shields.io/badge/node-%3E=18-green)
+![Bun](https://img.shields.io/badge/bun-%3E=1.3.3-green)
 ![TypeScript](https://img.shields.io/badge/types-checked-blue)
 ![License](https://img.shields.io/github/license/criszst/RouteX)
 
