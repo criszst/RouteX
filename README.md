@@ -6,14 +6,14 @@
 ![License](https://img.shields.io/github/license/criszst/RouteX)
 
 
-A lightweight, Express-inspired framework built for fun — clean, minimal, and fast.
-It doesn’t aim to replicate every Express feature, only the **core essentials** that make web development intuitive.
+A lightweight, Express-inspired framework focused on **clarity, performance, and minimalism**.
 
 ---
 
 ## Table of Contents
 
 * [Checklist](#checklist)
+* [Architecture](#architecture)
 * [Project Structure](#project-structure)
 * [Features](#features)
 * [Usage Example](#usage-example)
@@ -32,26 +32,96 @@ It doesn’t aim to replicate every Express feature, only the **core essentials*
 * [x] IP middleware for blocking & rate-limit
 * [x] Hot Module Reload for dev productivity
 * [x] 404 handler for unmatched routes
+* [x] Build-time route compilation
+* [x] Lightweight runtime route matcher
 * [ ] Simple logger middleware
 * [ ] Extra tests for better coverage
 
 ---
 
+## Architecture
+
+RouteX follows a **build-time route compilation** approach.
+
+Instead of resolving and loading routes on every incoming request, all route files are:
+
+1. Loaded at **build/startup time**
+2. Compiled into an internal route table
+3. Matched at runtime using a lightweight matcher
+
+At runtime, RouteX **does not load files, parse routes, or perform dynamic imports** — it only decides which precompiled handler should execute.
+
+### Why this matters
+
+• Faster request handling  
+• Predictable behavior  
+• Clear separation between build phase and runtime  
+• Easier debugging and testing  
+• Closer to how modern frameworks (Next.js, Fastify internals) work
+
+### Request lifecycle
+
+
+
 ## Project Structure
 
 ```
-RouteX/
-├── src/
-│   ├── routes/       # Define routes here
-│   ├── middlewares/  # IP blocker, HMR, etc.
-│   ├── core/         # Router, server, and layer controller
-│   ├── interfaces/   # TypeScript types for requests/responses
-│   ├── libs/         # Internal utilities (no external deps)
-│   ├── errors/       # Centralized error handling (WIP)
-│   └── index.ts      # Entry point
-├── dist/             # Compiled output
-├── package.json
-└── tsconfig.json
+src/
+├── api/ 
+│   ├── index.ts              # Framework entry point
+│   └── app.ts                # App bootstrap (optional, clean separation)
+├── core/                 # Core framework primitives
+│   ├── layer/
+│       ├── layer.ts
+│   ├── router/
+│       ├── RouterCompiler.ts
+│       ├── RouterMatcher.ts
+│       ├── PipelineCompiler.ts
+│       ├── CompiledNode.ts
+│       └── router.ts
+│   ├── types/
+│       ├── IApp.ts
+│       ├── IDetails.ts
+│       ├── IOptionsFile.ts
+│       ├── IPrototype.ts
+│
+├── middleware/           # Built-in middlewares
+│   ├── ip.ts
+│   ├── prototype.ts
+│   ├── RouteManager.ts
+│   └── RouteMiddleware.ts
+│
+├── http/
+│   ├── errors/
+│       ├── details.ts
+│   ├── middleware/
+│       ├── init.ts
+│       ├── ip.ts
+│       ├── prototype.ts
+│   ├── server/               # HTTP abstraction layer
+│       ├── request/
+│           ├── IServerRequest.ts
+│           └── request.ts
+│       ├── response/
+│           ├── IServerResponse.ts
+│           └── response.ts
+│
+├── examples/               # User-defined routes
+│    ├── routes/
+│       ├── main.ts
+│       ├── redirect.ts
+│       └── send.ts
+│
+├── libs/                 # Internal helpers
+│   ├── flatten.ts
+│   └── merge.ts
+│
+├── __mocks__/             # Test mocks
+│   └── mime.mock.ts
+│    └──response.mock.ts
+│
+
+
 ```
 
 ---
