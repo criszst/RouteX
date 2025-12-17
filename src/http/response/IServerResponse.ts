@@ -1,6 +1,6 @@
 import { ServerResponse } from "http";
 
-import Options from "../IOptions";
+import Options from "../../core/types/IOptionsFile";
 
 export default interface IServerResponse extends ServerResponse {
   /**

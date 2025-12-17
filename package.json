@@ -5,8 +5,8 @@
   "main": "src/index.ts",
   "scripts": {
     "vercel-build": "bun run build",
-    "start": "bun run build && cross-env NODE_ENV=production bun run dist/index.js",
-    "dev": "cross-env NODE_ENV=development  bun run src/index.ts",
+    "start": "bun run build && cross-env NODE_ENV=production bun run dist/api/index.js",
+    "dev": "cross-env NODE_ENV=development  bun run src/api/index.ts",
     "tests": "jest"
   },
   "devDependencies": {

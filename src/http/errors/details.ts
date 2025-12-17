@@ -1,4 +1,4 @@
-import IDetails from "../interfaces/IDetails";
+import IDetails from "../core/types/IDetails";
 
 class ErrorsDetails extends Error {
   details: IDetails

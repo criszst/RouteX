@@ -34,4 +34,6 @@ export default interface IServerRequest extends IncomingMessage {
    * @returns  key: string - returns an object with key-value pairs of cookies
    */
   cookies?: { [key: string]: string };
+
+  params: Record<string, string>;
 }

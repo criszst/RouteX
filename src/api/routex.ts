@@ -1,18 +1,18 @@
-import App from "./interfaces/IApp"
+import App from "../core/types/IApp"
 
-import { prototype } from "./middleware/prototype"
-import { merge } from "./libs/merge"
+import { prototype } from "../http/middleware/prototype"
+import { merge } from "../utils/merge"
 
 import { IncomingMessage, ServerResponse } from "http"
 
 
-import IServerResponse from "./interfaces/server/IServerResponse"
-import IServerRequest from "./interfaces/server/IServerRequest"
+import IServerResponse from "../http/response/IServerResponse"
+import IServerRequest from "../http/request/IServerRequest"
 
 function createApp(): App {
-  const app = ((alias: string, req: IServerRequest, res: IServerResponse, next: any): void => {
-    app.handle(alias, req, res, next)
-  }) as unknown as App
+  const app = ((req: IServerRequest, res: IServerResponse): void => {
+    app.handle(req, res)
+  }) as App
 
   const appReference = (obj: object): object => {
     return Object.create(obj, {
@@ -53,21 +53,23 @@ function createApp(): App {
   //   app._router.showLogs(options)
   // }
 
-  app.setCustom404 = (handler) => {
+  app.setCustom404 = (handler: any) => {
     app.lazyrouter();
     app.router.setCustom404(handler);
   };
 
-  app.use = (path: string, ...handlers: Function[]): void => {
+  app.use = (pathOrHandler: any, ...handlers: Function[]): void => {
     app.lazyrouter();
 
-    const newHandler = Object.create(handlers)
-    app.router.use(newHandler);
+    if (typeof pathOrHandler === 'function') {
+      app.router.use(pathOrHandler);
+      return;
+    }
+
+    app.router.use(pathOrHandler, handlers);
   };
 
-  app.init()
-
-  return app
+  return app;
 }
 
 export const app = createApp()

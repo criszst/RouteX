@@ -1,19 +1,20 @@
-import App from "../interfaces/IApp";
+import App from "../core/types/IApp";
 
-import IServerRequest from "../interfaces/server/IServerRequest";
-import IServerResponse from "../interfaces/server/IServerResponse";
+import IServerRequest from "../http/request/IServerRequest";
+import IServerResponse from "../http/response/IServerResponse";
 
 import chokidar, { FSWatcher } from "chokidar";
 import path from "path";
 
 import fs from 'fs';
 
+
 class RouteManager {
   private watcher?: FSWatcher;
   private baseDir: string;
 
   constructor(private app: App, private env = process.env.NODE_ENV) {
-    this.baseDir = path.join(process.cwd(), 'src', 'routes');
+    this.baseDir = path.join(process.cwd(), 'src', 'examples', 'routes');
   }
 
   public loadRoutes(): void {
@@ -38,16 +39,6 @@ class RouteManager {
     console.log(`[Router] Loaded ${files.length} route(s) from ${this.baseDir}`)
   }
 
-  // TODO: turn ClearCache as a Promise to manipulate erros when reloading
-  public clearCache(filePath: string): void{
-    try {
-      delete require.cache[require.resolve(filePath)]
-      console.log(`[Hot Reload] Cache cleared for ${filePath}`)
-
-    } catch (error) {
-      console.error(`Failed to clear cache for ${filePath}:\n ${error}\n`);
-    }
-  }
 
   public setupHotReload() {
     if (!this.baseDir) {
@@ -71,19 +62,14 @@ class RouteManager {
 
       console.log(`[Hot Reload] Change detected in: ${formattedPath}`);
 
-      // TODO: remove theses two try
-      try {
-        this.clearCache(filePath)
-      } catch {
-        console.warn(`[HMR] Could not clear cache for: ${formattedPath}`);
-      }
+      this.app.router.stack.length = 0;
 
-      try {
-        this.clearCache(fullPath)
-        console.log("[HMR] Routes reloaded successfully!");
-      } catch (error) {
-        console.error(`[HMR] Error reloading routes: ${error}`);
-      }
+      delete require.cache[require.resolve(fullPath)];
+
+      this.loadRoutes()
+      this.app.router.rebuild();
+
+      console.log('[HMR] Router rebuilt successfully');
     })
   }
 

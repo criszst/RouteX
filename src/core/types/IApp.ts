@@ -1,9 +1,10 @@
-import { Router } from "../core/router";
+import { Router } from "../router/router";
 import { IncomingMessage, ServerResponse } from 'http';
 
-import GetOptions from '../interfaces/IProtoype'
-import IServerResponse from "./server/IServerResponse";
-import IServerRequest from "./server/IServerRequest";
+import GetOptions from './IProtoype'
+import IServerResponse from "../../http/response/IServerResponse";
+import IServerRequest from "../../http/request/IServerRequest";
+import { RouteHandler } from "./IRouteHandler";
 
 
 /**
@@ -40,7 +41,6 @@ interface App {
      */
      (req: IncomingMessage,
       res: ServerResponse,
-      next: (err?: Error) => void
      ): void
 
     /**
@@ -54,10 +54,10 @@ interface App {
      * @param res - The HTTP response object.
      * @param next - A callback function to pass control to the next middleware.
      */
-     handle(alias: string,
+     handle(
            req: IncomingMessage,
            res: ServerResponse,
-           next: (err?: Error) => void
+           next?: (err?: Error) => void
         ): void
 
     /**
@@ -70,16 +70,18 @@ interface App {
     /**
      * Registers a route for the HTTP GET method.
      * @param path - The URL path to register the route on.
+     * @param options - Optional configuration options for the route.
      * @param handlers - Functions to handle the route when matched.
      */
-     get(path: GetOptions["path"], options: { aliases?: string}, ...handlers: GetOptions["handlers"]): void
+     get(path: GetOptions["path"], options: { aliases?: string | string[] }, ...handlers: RouteHandler[]): void
 
     /**
      * Registers a route for the HTTP POST method.
      * @param path - The URL path to register the route on.
+     * @param options - Optional configuration options for the route.
      * @param handlers - Functions to handle the route when matched.
      */
-     post(path: GetOptions["path"], ...handlers: GetOptions["handlers"]): void
+     post(path: GetOptions["path"], options: { aliases?: string | string[] }, ...handlers: RouteHandler[]): void
 
     /**
      * Lazily initializes the router if not already initialized.

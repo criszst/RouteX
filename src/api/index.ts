@@ -1,6 +1,6 @@
-import { app } from "./express";
+import { app } from "./routex";
 
-import RouteManager from "./middleware/RouteManager";
+import RouteManager from "../middleware/RouteManager";
 
 const port = 3000;
 

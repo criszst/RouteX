@@ -1,22 +1,24 @@
-import GetOptions from '../interfaces/IProtoype'
+import GetOptions from "../../core/types/IProtoype"
 
-import { Router } from '../core/router';
+
+import { Router } from '../../core/router/router';
 import { IncomingMessage, ServerResponse } from 'http';
 
-import { Response } from '../server/response';
-import IServerRequest from '../interfaces/server/IServerRequest';
-import IServerResponse from '../interfaces/server/IServerResponse';
+import { Response } from '../../http/response/response';
+import IServerRequest from '../../http/request/IServerRequest';
+import IServerResponse from '../../http/response/IServerResponse';
+import { RouteHandler } from "../../core/types/IRouteHandler";
 
 const middleware = require('./init');
 
 export const prototype = {
-  router: {} as Router,
+  router: null as Router | null,
   cache: {},
   engines: {},
   settings: {} as string | any,
 
   init() {
-    this.router = new Router();
+    this.lazyrouter();
   },
 
   /**
@@ -68,7 +70,7 @@ export const prototype = {
    * @param next - A callback function to pass control to the next middleware.
    */
 
-  handle(req: IServerRequest, res: IServerResponse | any, next: any): void {
+  handle(req: IServerRequest, res: IServerResponse, next?: Function): void {
     this.lazyrouter();
 
     Response.send(res);
@@ -77,7 +79,7 @@ export const prototype = {
     Response.redirect(res);
     Response.sendFile(res)
 
-    this.router.handle(req, res, next);
+    this.router?.handle(req, res, next);
   },
 
 
@@ -91,6 +93,10 @@ export const prototype = {
    */
 
   listen(port: number, callback: () => void) {
+    this.lazyrouter()
+
+    this.router?.compile();
+
     const server = require('http').createServer(this);
     server.listen(port, callback)
   },
@@ -102,12 +108,13 @@ export const prototype = {
    * @param options - Optional settings for the route, including aliases.
    * @param handlers - Functions to handle the route when matched.
    */
-  get(path: GetOptions["path"], options: { aliases?: string }, ...handlers: GetOptions["handlers"]): void {
-    this.router.get(
-      path,
-      options.aliases ? { aliases: Array.isArray(options.aliases) ? options.aliases : [options.aliases] } : {},
-      ...handlers
-    );
+  get(path: GetOptions["path"], options:  { aliases: string | string[] }, ...handlers: RouteHandler[]): void {
+    this.lazyrouter()
+
+    handlers.forEach(handler => {
+      this.router?.get(path, options, handler);
+    })
+
   },
 
 
@@ -116,8 +123,13 @@ export const prototype = {
    * @param path - URL path which the route is registered to
    * @param handlers - functions that will be called when the route is matched
    */
-  post(path: GetOptions["path"], ...handlers: GetOptions["handlers"]): void {
-    this.router.post(path, ...handlers);
+  post(path: GetOptions["path"], options: { aliases: string | string[] }, ...handlers: RouteHandler[]): void {
+    this.lazyrouter()
+
+    handlers.forEach(handler => {
+      this.router?.post(path, options, handler);
+    })
+
   },
 
 
@@ -128,11 +140,11 @@ export const prototype = {
    * This method is called by the prototype's handle method, if the router
    * has not been created yet.
    */
-  lazyrouter(): void {
-    if (!this.router) {
-      this.router = new Router({});
-      this.router.use(middleware.init(this));
-    }
-  },
+   lazyrouter(): void {
+     if (this.router === null) {
+       this.router = new Router();
+       this.router.use(middleware.init(this));
+     }
+   }
 
 };

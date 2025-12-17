@@ -1,4 +1,4 @@
-interface Options {
+interface OptionsSendMethod {
     attachment?: boolean;
     maxAge?: number;
     root?: string;
@@ -7,4 +7,4 @@ interface Options {
     }
 }
 
-export default Options;
+export default OptionsSendMethod;

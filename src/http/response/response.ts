@@ -6,20 +6,20 @@ const mime = require('mime');
 
 import { basename, join } from 'path';
 
-import ErrorsDetails from "../errors/details";
-import Options from "../interfaces/IOptions";
+import ErrorsDetails from "../../http/errors/details"
+import OptionsSendMethod from '../../core/types/IOptionsFile'
 
-import ExtendedServerResponse from "../interfaces/server/IServerResponse";
+import IServerResponse from "../../http/response/IServerResponse";
 
 import { IncomingMessage, ServerResponse } from 'http';
 
 export class Response {
 
-  constructor(initializer?: (res: ExtendedServerResponse) => void) {
+  constructor(initializer?: (res: IServerResponse) => void) {
     this.initializer = initializer || this.initializer;
   }
 
-  initializer(res: ExtendedServerResponse): void {
+  initializer(res: IServerResponse): void {
     Response.send(res);
     Response.json(res);
     Response.download(res);
@@ -35,17 +35,17 @@ export class Response {
    *
    */
 
-  public static send(res: ExtendedServerResponse): void {
+  public static send(res: IServerResponse): void {
     res.send = function (body: object | string) {
       if (typeof body === 'object') {
         this.setHeader('Access-Control-Allow-Methods', 'POST');
         this.setHeader('Content-Type', 'application/json');
         this.write(JSON.stringify(body), 'utf-8');
-        this.end();
+        this.end()
       } else {
         this.setHeader('Content-Type', 'text/plain');
         this.write(JSON.stringify(body), 'utf-8');
-        this.end();
+        this.end()
       }
     };
   }
@@ -57,7 +57,7 @@ export class Response {
    * @param body - The JSON body to send.
    *
    */
-  public static json(res: ExtendedServerResponse): void {
+  public static json(res: IServerResponse): void {
     res.json = function (body: Object | String) {
       this.setHeader('Access-Control-Allow-Methods', 'GET');
       this.setHeader('Content-Type', 'application/json');
@@ -81,7 +81,7 @@ export class Response {
    *
    */
 
-  public static download(res: ExtendedServerResponse): void {
+  public static download(res: IServerResponse): void {
     res.download = function (path: string) {
       if (!path) throw ErrorsDetails.create('Path Error', 'path is required', {
         expected: 'non-empty string',
@@ -107,7 +107,7 @@ export class Response {
    * @param res - The response object to which the redirect method is added.
    *
   */
-  public static redirect(res: ExtendedServerResponse): void {
+  public static redirect(res: IServerResponse): void {
     res.redirect = function (url: string): void {
       if (!url) {
         throw ErrorsDetails.create(
@@ -147,8 +147,8 @@ export class Response {
    *   maxAge: 1000
    * });
    */
-  public static sendFile(res: ExtendedServerResponse): Promise<void> | void {
-    res.sendFile = function (path: string, options?: Options, callback?: (err?: Error | null) => void): Promise<void> {
+  public static sendFile(res: IServerResponse): Promise<void> | void {
+    res.sendFile = function (path: string, options?: OptionsSendMethod, callback?: (err?: Error | null) => void): Promise<void> {
 
       return new Promise(async (resolve: () => void, reject: (err: Error) => void) => {
 

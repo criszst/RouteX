@@ -1,11 +1,11 @@
-import { app } from "../express";
-import IServerRequest from "../interfaces/server/IServerRequest";
-import IServerResponse from "../interfaces/server/IServerResponse";
+import { app } from "../../api/routex";
+import IServerRequest from "../../http/request/IServerRequest";
+import IServerResponse from "../../http/response/IServerResponse";
 
 export default function send(req: IServerRequest, res: IServerResponse) {
   app.get('/sendFile', { aliases: '/send'}, (req: IServerRequest, res: IServerResponse) => {
-    res.sendFile('', {
-      root: __dirname,
+    res.sendFile('send.html', {
+      root: `${process.cwd()}/src`,
       headers: {
         'Content-Type': 'application/octet-stream'
       }

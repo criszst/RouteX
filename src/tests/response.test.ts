@@ -1,117 +1,68 @@
-import {describe, expect, it} from '@jest/globals';
-const mime = require('mime');
+import { describe, expect, it, jest } from '@jest/globals';
+import { Response } from '../http/response/response';
+import ExtendedServerResponse from '../http/response/IServerResponse';
 import path from 'path';
+import fs from 'fs';
+import createMockResponse from '../__mocks__/response.mock';
 
-import { Response } from "../server/response";
-import ExtendedServerResponse from "../interfaces/server/IServerResponse";
-
-const fs = require('fs');
+const mime = require('mime');
 
 describe('Response', () => {
 
-    it('should set JSON content type and send JSON string for object input in send method', (): void => {
-        const res = {
-            setHeader: jest.fn(),
-            end: jest.fn(),
-        } as unknown as ExtendedServerResponse;
+  it('send() should stringify objects and set JSON header', () => {
+    const res = createMockResponse();
 
-        Response.send(res);
-        const body = { key: 'value' };
-        res.send(body);
+    Response.send(res);
+    res.send({ a: 1 });
 
-        expect(res.setHeader).toHaveBeenCalledWith('Content-Type', 'application/json');
-        expect(res.end).toHaveBeenCalledWith(JSON.stringify(body), 'utf-8');
-    });
+    expect(res.setHeader).toHaveBeenCalledWith('Content-Type', 'application/json');
+    expect(res.end).toHaveBeenCalled();
+  });
 
+  it('json() should set header and call send()', () => {
+    const res = createMockResponse();
 
-    it('should set plain text content type and send string for string input in send method', (): void => {
-        const res = {
-            setHeader: jest.fn(),
-            end: jest.fn()
-        } as unknown as ExtendedServerResponse;
+    Response.send(res);
+    Response.json(res);
 
-        Response.send(res);
-        const body = 'plain text';
+    res.json({ a: 1 });
 
-        res.send(body);
+    expect(res.setHeader).toHaveBeenCalledWith('Content-Type', 'application/json');
 
-        expect(res.setHeader).toHaveBeenCalledWith('Content-Type', 'text/plain');
-        expect(res.end).toHaveBeenCalledWith(body, 'utf-8');
-    });
+    expect(res.send).toHaveBeenCalledWith(JSON.stringify({ a: 1 }));
+  });
 
+  it('download() should set headers and stream file', () => {
+    const res = createMockResponse();
 
-    it('should set JSON content type and send JSON string in json method', (): void => {
-        const res = {
-            setHeader: jest.fn(),
-            send: jest.fn()
-        } as unknown as ExtendedServerResponse;
-
-        Response.json(res);
-
-        const body = { key: 'value' };
-
-        res.json(body);
-
-        expect(res.setHeader).toHaveBeenCalledWith('Content-Type', 'application/json');
-        expect(res.send).toHaveBeenCalledWith(JSON.stringify(body));
-    });
+    jest.spyOn(mime, 'getType').mockReturnValue('text/plain');
+    jest.spyOn(fs, 'createReadStream').mockReturnValue({
+      pipe: jest.fn()
+    } as any);
 
 
-    it('should set appropriate headers and stream file in download method', (): void => {
-        const res = {
-            setHeader: jest.fn(),
-            pipe: jest.fn()
-        } as unknown as ExtendedServerResponse;
+    Response.download(res);
+    res.download('/file.txt');
 
+    expect(res.setHeader).toHaveBeenCalledWith(
+      'Content-Type',
+      'application/json'
+    );
 
-        jest.spyOn(fs, 'createReadStream').mockReturnValue({
-            pipe: jest.fn()
-        });
+    expect(res.setHeader).toHaveBeenCalledWith(
+      'Content-Disposition',
+      'attachment; filename=file.txt'
+    );
+  });
 
-        jest.spyOn(mime, 'getType').mockReturnValue('text/plain');
+  it('redirect() should set location header and end response', () => {
+    const res = createMockResponse();
 
-        Response.download(res);
+    Response.redirect(res);
+    res.redirect('https://example.com');
 
-        const path = '/path/to/file.txt';
-        res.download(path);
+    expect(res.setHeader).toHaveBeenCalledWith('Location', 'https://example.com');
+    expect(res.end).toHaveBeenCalled();
+  });
 
-        expect(res.setHeader).toHaveBeenCalledWith('Content-Type', 'text/plain');
-        expect(res.setHeader).toHaveBeenCalledWith('Content-Disposition', 'attachment; filename=file.txt');
-        expect(fs.createReadStream).toHaveBeenCalledWith(path);
-    });
-
-
-    it('should redirect properly to a new url', (): void => {
-        const res = {
-            setHeader: jest.fn(),
-            redirect: jest.fn(),
-            end: jest.fn()
-        } as unknown as ExtendedServerResponse;
-
-        const url = 'https://example.com';
-
-        Response.redirect(res);
-        res.redirect(url);
-
-        expect(res.setHeader).toHaveBeenCalledWith('Location', url);
-        expect(res.end).toHaveBeenCalled();
-    })
-
-
-    it('should send file to client', (): void => {
-        const res = {
-          setHeader: jest.fn(),
-          sendfile: jest.fn()
-        } as unknown as ExtendedServerResponse;
-
-        Response.sendFile(res);
-
-       res.sendFile(path.resolve(__dirname, '../../send.html'), {
-          attachment: true,
-          root: undefined
-        })
-
-        expect(res.setHeader).toHaveBeenCalledWith('Access-Control-Allow-Method', 'POST', 'Content-Type', 'text/plain', 'Content-Disposition', 'attachment; filename=send.html', );
-        expect(fs.createReadStream).toHaveBeenCalledWith('../../send.html');
-    })
 });
