@@ -1,9 +1,7 @@
 import { app } from "../../api/routex";
-import IServerRequest from "../../http/request/IServerRequest";
-import IServerResponse from "../../http/response/IServerResponse";
 
-export default function send(req: IServerRequest, res: IServerResponse) {
-  app.get('/sendFile', { aliases: '/send'}, (req: IServerRequest, res: IServerResponse) => {
+export default function send() {
+  app.get('/sendFile', { aliases: '/send'}, (req, res) => {
     res.sendFile('send.html', {
       root: `${process.cwd()}/src`,
       headers: {

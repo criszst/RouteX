@@ -36,4 +36,5 @@ export default interface IServerRequest extends IncomingMessage {
   cookies?: { [key: string]: string };
 
   params: Record<string, string>;
+  query: Record<string, string | string[]>;
 }

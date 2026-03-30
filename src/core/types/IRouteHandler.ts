@@ -3,5 +3,6 @@ import IServerResponse from "../../http/response/IServerResponse";
 
 export type RouteHandler = (
   req: IServerRequest,
-  res: IServerResponse
+  res: IServerResponse,
+  next?: () => void
 ) => void | Promise<void>;

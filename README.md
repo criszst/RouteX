@@ -163,15 +163,15 @@ response.sendFile("./index.html");
 ```bash
 git clone https://github.com/criszst/RouteX.git
 cd RouteX
-npm install
-npm run build
-npm run start
+bun install
+bun dev
+bun start
 ```
 
 Optional:
 
 ```bash
-npm run test
+bun test
 ```
 
 ---

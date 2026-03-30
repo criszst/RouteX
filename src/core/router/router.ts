@@ -85,13 +85,20 @@ export class Router {
     }
 
     req.params = result.params
+    req.query = result.query
 
-   return result.handler.forEach(handler => {
-      handler(req, res);
-    });
+    let index = 0;
+    const handlers = result.handler;
+
+    const next = () => {
+      const handler = handlers[index++];
+      if (!handler) return;
+      (handler as any)(req, res, next);
+    };
+
+    next();
 
   }
-
 
   /**
    * Mounts the given function or functions at the root of the router.

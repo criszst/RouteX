@@ -21,7 +21,7 @@ function createApp(): App {
 
         configurable: true,
         writable: true,
-        enumerable: false,
+        enumerable: true,
       },
       req: {
         value: app.request,

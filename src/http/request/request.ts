@@ -51,10 +51,16 @@ export class Request {
 
   /**
    * Returns the cookies of the request as an object.
-   * @returns String
+   * @returns Record<string, string>
    */
-  public get cookies(): IncomingMessage["headers"]["cookie"] | string {
-    return this.req.headers.cookie;
+  public get cookies(): Record<string, string> {
+    const raw = this.req.headers.cookie ?? '';
+
+    return Object.fromEntries(raw.split(';')
+      .map((cookie) => cookie.trim().split('='))
+      .filter(([key]) => key)
+      .map(([key, ...value]) => [key.trim(), value.join('=').trim()])
+    )
   }
 
 }

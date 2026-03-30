@@ -11,7 +11,6 @@ import { RouteHandler } from "./IRouteHandler";
  * Interface representing an application with request handling capabilities.
  */
 interface App {
-
     /**
     * Mounts the specified middleware function or functions at the specified path.
     */

@@ -1,9 +1,11 @@
 import { app } from "../../api/routex";
-import IServerRequest from "../../http/request/IServerRequest";
-import IServerResponse from "../../http/response/IServerResponse";
 
 export default function mainRoutes() {
-  app.get('/json', {aliases: '/js'}, (req: IServerRequest, res: IServerResponse) => {
-    res.json({'json': 'test for send method'})
+  app.get('/json', {aliases: '/js'}, (req, res) => {
+    res.json({'json': 'test for json method'})
   });
+
+  app.get('/json2', {aliases: '/js2'}, (req, res) => {
+    res.json({'json2': 'test for JSON2 method'})
+  })
 }
