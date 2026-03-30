@@ -1,8 +1,5 @@
 import App from "../core/types/IApp";
 
-import IServerRequest from "../http/request/IServerRequest";
-import IServerResponse from "../http/response/IServerResponse";
-
 import chokidar, { FSWatcher } from "chokidar";
 import path from "path";
 
@@ -13,7 +10,10 @@ class RouteManager {
   private baseDir: string;
 
   constructor(private app: App, private env = process.env.NODE_ENV) {
-    this.baseDir = path.join(process.cwd(), 'src', 'examples', 'routes');
+    this.baseDir = path.join(
+      process.cwd(),
+      this.env === 'production' ? 'dist' : 'src', 'examples', 'routes',
+    );
   }
 
   private loadedRoutes = new Set<string>();

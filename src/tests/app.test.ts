@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from '@jest/globals';
+import { describe, it, expect, beforeEach } from 'bun:test';
 import { app } from '../api/routex';
 
 describe('App core safety', () => {

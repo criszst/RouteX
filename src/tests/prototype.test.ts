@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach, jest } from '@jest/globals';
+import { describe, expect, it, beforeEach, jest } from 'bun:test';
 import { prototype as proto } from '../http/middleware/prototype';
 
 describe('prototype core', () => {
