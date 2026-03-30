@@ -10,10 +10,7 @@ class RouteManager {
   private baseDir: string;
 
   constructor(private app: App, private env = process.env.NODE_ENV) {
-    this.baseDir = path.join(
-      process.cwd(),
-      this.env === 'production' ? 'dist' : 'src', 'examples', 'routes',
-    );
+    this.baseDir = path.join(__dirname, '..', 'examples', 'routes');
   }
 
   private loadedRoutes = new Set<string>();
