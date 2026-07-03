@@ -4,7 +4,7 @@
 ![TypeScript](https://img.shields.io/badge/types-checked-blue)
 ![License](https://img.shields.io/github/license/criszst/RouteX)
 
-A lightweight, Express-inspired HTTP framework focused on **clarity, performance, and minimalism** — built from scratch in TypeScript/Bun.
+A lightweight, Express-inspired HTTP framework focused on **clarity, performance, and minimalism** - built from scratch in TypeScript/Bun.
 
 ---
 
