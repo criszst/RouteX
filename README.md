@@ -73,7 +73,7 @@ router.stack
 
 #### 3. The Trie Compiler — Stack → CompiledNode tree
 
-`RouterCompiler.compile(stack)` walks every layer and builds a **prefix trie** (also called a radix-style route tree). Each path segment becomes a trie node:
+`RouterCompiler.compile(stack)` walks every layer and builds a **prefix trie** (also called a radix route tree). Each path segment becomes a trie node:
 
 ```
 Registered routes:
