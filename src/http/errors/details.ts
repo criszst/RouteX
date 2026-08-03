@@ -1,4 +1,5 @@
 import IDetails from "../../core/types/IDetails";
+import { colors } from "../../utils/ConsoleColors";
 
 class ErrorsDetails extends Error {
   details: IDetails
@@ -14,8 +15,10 @@ class ErrorsDetails extends Error {
   }
 
   public static create(errorName: string, message: string, details: IDetails): ErrorsDetails {
-    const expectedError = `${message}
+    const expectedError =
+      `${colors.red} ${message}
 ------> ${details.expected} expected, but " ${details.received} " does not match\n`;
+
 
     return new ErrorsDetails(errorName, expectedError, details);
   }
