@@ -10,12 +10,12 @@ A lightweight, Express-inspired HTTP framework focused on **clarity, performance
 
 ## Table of Contents
 
+* [Usage](#usage)
+* [Getting Started](#getting-started)
 * [Checklist](#checklist)
 * [Architecture](#architecture)
 * [Project Structure](#project-structure)
 * [Features](#features)
-* [Usage](#usage)
-* [Getting Started](#getting-started)
 
 ---
 
@@ -38,6 +38,89 @@ A lightweight, Express-inspired HTTP framework focused on **clarity, performance
 * [ ] Expanded test coverage
 
 ---
+
+## Usage
+
+### Registering routes
+
+```ts
+import { app } from './api/routex';
+
+// Simple route
+app.get('/users', { aliases: '/u' }, (req, res) => {
+  res.json({ users: [] });
+});
+
+// Dynamic param
+app.get('/users/:id', {}, (req, res) => {
+  res.json({ id: req.params.id });
+});
+
+// POST route
+app.post('/users', {}, (req, res) => {
+  res.json({ created: true });
+});
+
+// Custom 404
+app.setCustom404((req, res) => {
+  res.statusCode = 404;
+  res.json({ error: 'Not found' });
+});
+```
+
+### Response methods
+
+```ts
+res.send("Hello, world!");
+res.json({ hello: "world" });
+res.redirect("https://example.com");
+res.download("./report.pdf");
+res.sendFile("./index.html", { root: process.cwd() });
+```
+
+### Route files (convention)
+
+Each file in `src/examples/routes/` exports a default function. RouteManager discovers and loads them automatically:
+
+```ts
+// src/examples/routes/users.ts
+import { app } from '../../api/routex';
+
+export default function usersRoutes() {
+  app.get('/users', {}, (req, res) => {
+    res.json({ users: [] });
+  });
+}
+```
+
+---
+
+## Getting Started
+
+```bash
+git clone https://github.com/criszst/RouteX.git
+cd RouteX
+bun install
+
+# Development (hot reload enabled)
+bun dev
+
+# Production build + start
+bun start
+
+# Tests
+bun test
+```
+
+The server runs on **[http://localhost:3000](http://localhost:3000)** by default.
+
+```bash
+curl http://localhost:3000/
+# {"hello":"world"}
+
+curl http://localhost:3000/json
+# {"json":"test for json method"}
+
 
 ## Architecture
 
@@ -257,85 +340,3 @@ src/
 | Route aliases | Register the same handler under multiple paths |
 
 ---
-
-## Usage
-
-### Registering routes
-
-```ts
-import { app } from './api/routex';
-
-// Simple route
-app.get('/users', { aliases: '/u' }, (req, res) => {
-  res.json({ users: [] });
-});
-
-// Dynamic param
-app.get('/users/:id', {}, (req, res) => {
-  res.json({ id: req.params.id });
-});
-
-// POST route
-app.post('/users', {}, (req, res) => {
-  res.json({ created: true });
-});
-
-// Custom 404
-app.setCustom404((req, res) => {
-  res.statusCode = 404;
-  res.json({ error: 'Not found' });
-});
-```
-
-### Response methods
-
-```ts
-res.send("Hello, world!");
-res.json({ hello: "world" });
-res.redirect("https://example.com");
-res.download("./report.pdf");
-res.sendFile("./index.html", { root: process.cwd() });
-```
-
-### Route files (convention)
-
-Each file in `src/examples/routes/` exports a default function. RouteManager discovers and loads them automatically:
-
-```ts
-// src/examples/routes/users.ts
-import { app } from '../../api/routex';
-
-export default function usersRoutes() {
-  app.get('/users', {}, (req, res) => {
-    res.json({ users: [] });
-  });
-}
-```
-
----
-
-## Getting Started
-
-```bash
-git clone https://github.com/criszst/RouteX.git
-cd RouteX
-bun install
-
-# Development (hot reload enabled)
-bun dev
-
-# Production build + start
-bun start
-
-# Tests
-bun test
-```
-
-The server runs on **[http://localhost:3000](http://localhost:3000)** by default.
-
-```bash
-curl http://localhost:3000/
-# {"hello":"world"}
-
-curl http://localhost:3000/json
-# {"json":"test for json method"}
