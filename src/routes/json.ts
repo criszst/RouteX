@@ -1,4 +1,4 @@
-import { app } from "../../api/routex";
+import { app } from "../api/routex";
 
 export default function mainRoutes() {
   app.get('/json', {aliases: '/js'}, (req, res) => {

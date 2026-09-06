@@ -1,4 +1,4 @@
-import { app } from "../../api/routex";
+import { app } from "../api/routex";
 
 export default function redirectRoutes() {
   app.get('/redirect', {aliases: '/reds'}, (req, res) => {

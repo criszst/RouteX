@@ -1,4 +1,4 @@
-import App from "../../core/types/IApp";
+import App from "../core/types/IApp";
 
 export default function paramsPage(app: App) {
   app.get('/query', ({aliases: 'qr'}), (req, res) => {

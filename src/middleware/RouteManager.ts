@@ -8,24 +8,30 @@ import { log, colors } from "../utils/ConsoleColors";
 
 class RouteManager {
   private watcher?: FSWatcher;
-  private baseDir: string;
   private srcDir: string;
 
   constructor(private app: App, private env = process.env.NODE_ENV) {
-    this.baseDir = path.join(__dirname, '..', '*', 'routes');
     this.srcDir = path.join(__dirname, '..');
   }
 
   private loadedRoutes = new Set<string>();
 
 
-
   private getRouteDirs(): string[] {
-    return fs.readdirSync(this.srcDir, { withFileTypes: true })
+    const rootRoutes = path.join(this.srcDir, 'routes');
+
+    const nestedRoutes = fs.readdirSync(this.srcDir, { withFileTypes: true })
       .filter(dir => dir.isDirectory())
       .map(dir => path.join(this.srcDir, dir.name, 'routes'))
       .filter(routeDir => fs.existsSync(routeDir));
+
+    return [
+      ...(fs.existsSync(rootRoutes) ? [rootRoutes] : []),
+      ...nestedRoutes
+    ];
   }
+
+
 
   private getRouteFiles(filePath?: string): string[] {
     return this.getRouteDirs()
@@ -50,7 +56,9 @@ class RouteManager {
   }
 
   public loadRoutes(option: { filePath?: string, forceReload?: boolean } = {}): void {
-    if (!this.getRouteDirs()) {
+    const routes = this.getRouteDirs();
+
+    if (routes.length == 0) {
       console.warn(`Routes cannot be loaded because base directory is not set.`);
       return;
     }
@@ -68,11 +76,13 @@ class RouteManager {
 
 
   public setupHotReload() {
+    const routeDirs = this.getRouteDirs()
+
     if (!this.watcher) {
-      this.watcher = chokidar.watch(this.getRouteDirs(), {
+      this.watcher = chokidar.watch(routeDirs, {
         ignored: /(^|[\/\\])\../,
-        persistent: true
-      })
+        persistent: true,
+      });
     }
 
     this.watcher.on('change', (filePath: string) => {
@@ -82,14 +92,19 @@ class RouteManager {
         this.app.router.stack = this.app.router.stack.filter(l => l.type !== 'route');
       }
 
-      const relPath: string = path.relative(this.baseDir, filePath)
-      const fullPath: string = path.resolve(process.cwd(), 'src', 'examples', 'routes', relPath);
+      const currentRouteDir = this.getRouteDirs()
+      const routeDir = currentRouteDir.find(dir => filePath.startsWith(dir))
 
-      const formattedPath: string | undefined = fullPath.replace(/\\/g, '/').match(/(?<=src)\s*(.*)/)?.[0];
+      if (!routeDir) {
+        console.warn(`No route directory found for: ${filePath}`)
+        return
+      }
+
+      const formattedPath: string | undefined = filePath.replace(/\\/g, '/').match(/(?<=src)\s*(.*)/)?.[0] ?? filePath;
 
       console.log(`\n--- [Hot Reload] Change detected in: ${formattedPath}`);
 
-      this.loadRoutes({ filePath: relPath, forceReload: true });
+      this.loadRoutes({ filePath, forceReload: true });
       console.log('\n--- [Hot Reload] Router rebuilt successfully');
 
       this.app.router?.rebuild();

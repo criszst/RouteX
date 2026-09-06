@@ -1,4 +1,4 @@
-import { app } from "../../api/routex";
+import { app } from "../api/routex";
 
 export default function send() {
   app.get('/sendFile', { aliases: '/send'}, (req, res) => {
