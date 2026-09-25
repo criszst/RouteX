@@ -120,7 +120,7 @@ curl http://localhost:3000/
 
 curl http://localhost:3000/json
 # {"json":"test for json method"}
-
+```
 
 ## Architecture
 
