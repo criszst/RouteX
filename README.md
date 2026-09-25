@@ -187,9 +187,8 @@ Dynamic segments (`:param`) become a `paramChild` node with a `paramName` proper
 4. On a match, collect `params` (e.g. `{ id: '42' }`) and `query` (parsed query string)
 5. Look up the HTTP method handler on the final node
 
-No file loading, no regex scanning, no linear search — just map lookups down a tree.
 
-#### 5. Middleware pipeline — chained `next()`
+#### 5. Middleware pipeline ( aka `next()` )
 
 Handlers stored on each trie node are executed as a **pipeline**. Each handler receives `(req, res, next)` and calls `next()` to pass control to the next handler in the chain:
 
@@ -206,7 +205,7 @@ next();
 
 `PipelineCompiler.compilePipeline()` provides the async version of this pattern.
 
-#### 6. Hot Reload — dev only
+#### 6. Hot Reload - dev only
 
 In development mode, `RouteManager` uses **chokidar** to watch the routes directory. On any file change:
 
@@ -224,7 +223,7 @@ delete require.cache[...] + require(file)       ← reload file
 router.rebuild()                                ← recompile trie
 ```
 
-Hot reload does **not** run in production.
+Hot reload does **not** run in production
 
 ### Full request lifecycle
 
